@@ -1,0 +1,22 @@
+<header class="admin-header">
+  <div class="admin-header-inner">
+    <div class="admin-brand">
+      <a href="/admin">Admin</a>
+      <span class="admin-sep">/</span>
+      <a href="/" target="_blank" rel="noopener" class="admin-viewsite">View site ↗</a>
+    </div>
+    <nav class="admin-nav">
+      <a href="/admin" class="<%= section === 'dashboard' ? 'active' : '' %>">Dashboard</a>
+      <a href="/admin/posts" class="<%= section === 'posts' ? 'active' : '' %>">Posts</a>
+      <a href="/admin/projects" class="<%= section === 'projects' ? 'active' : '' %>">Projects</a>
+      <a href="/admin/images" class="<%= section === 'images' ? 'active' : '' %>">Images</a>
+      <a href="/admin/settings" class="<%= section === 'settings' ? 'active' : '' %>">Settings</a>
+    </nav>
+    <div class="admin-actions">
+      <button class="theme-toggle" data-theme-toggle aria-label="Toggle theme">☾</button>
+      <form method="post" action="/admin/logout" class="inline">
+        <button type="submit" class="btn btn-secondary btn-sm">Sign out</button>
+      </form>
+    </div>
+  </div>
+</header>

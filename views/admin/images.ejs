@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><%- include("layout-head") %></head>
+<body class="admin-body">
+<%- include("nav") %>
+
+<main class="admin-main">
+  <div class="admin-container">
+    <div class="admin-title-row">
+      <h1 class="admin-title">Images</h1>
+      <label class="btn btn-primary">
+        Upload image
+        <input type="file" accept="image/*" id="library-upload" hidden multiple>
+      </label>
+    </div>
+
+    <div class="alert alert-info" id="upload-status" hidden></div>
+
+    <p class="muted small">
+      Images are downscaled to 1600px and converted to WebP in your browser before upload,
+      then stored in Postgres. Server limit is <%= (maxBytes / 1048576).toFixed(0) %> MB per file.
+    </p>
+
+    <section class="panel">
+      <% if (images.length) { %>
+        <div class="image-grid library">
+          <% images.forEach(function (img) { %>
+            <figure class="image-card">
+              <a href="/images/<%= img.id %>" target="_blank" rel="noopener">
+                <img src="/images/<%= img.id %>" alt="<%= img.alt_text %>" loading="lazy">
+              </a>
+              <figcaption>
+                <div class="image-name" title="<%= img.filename %>"><%= img.filename %></div>
+                <div class="muted small">
+                  <%= img.width && img.height ? img.width + "×" + img.height + " · " : "" %><%= (img.byte_size / 1024).toFixed(0) %> KB
+                </div>
+                <div class="image-url">
+                  <input type="text" readonly value="/images/<%= img.id %>" data-copy>
+                </div>
+                <form method="post" action="/admin/images/<%= img.id %>/delete"
+                      data-confirm="Delete this image? Posts using it will lose their cover.">
+                  <button type="submit" class="link link-danger small">Delete</button>
+                </form>
+              </figcaption>
+            </figure>
+          <% }); %>
+        </div>
+      <% } else { %>
+        <p class="empty">No images yet. Use the Upload button above.</p>
+      <% } %>
+    </section>
+  </div>
+</main>
+
+<script src="/assets/js/main.js"></script>
+<script src="/assets/js/editor.js"></script>
+</body>
+</html>

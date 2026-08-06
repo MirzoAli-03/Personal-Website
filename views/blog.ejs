@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><%- include("partials/head", { description: "Writing and notes by " + settings.full_name }) %></head>
+<body>
+<%- include("partials/header") %>
+
+<main>
+  <section class="hero" style="padding-bottom:24px">
+    <div class="container">
+      <div class="hero-eyebrow">Writing</div>
+      <h1>Blog</h1>
+      <p class="lead">Notes on what I'm building, reading, and figuring out.</p>
+    </div>
+  </section>
+
+  <section style="padding-top:16px">
+    <div class="container">
+      <% if (posts.length) { %>
+        <div class="grid">
+          <% posts.forEach(function (post) { %>
+            <%- include("partials/post-card", { post: post }) %>
+          <% }); %>
+        </div>
+      <% } else { %>
+        <p class="section-intro">No posts published yet. Write your first one from the admin panel.</p>
+      <% } %>
+    </div>
+  </section>
+</main>
+
+<%- include("partials/footer") %>
+</body>
+</html>

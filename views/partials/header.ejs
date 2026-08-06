@@ -1,0 +1,17 @@
+<header class="site-header">
+  <nav class="nav">
+    <a href="/" class="nav-brand"><%= settings.full_name %></a>
+    <div class="nav-links" data-nav-links>
+      <a href="/" class="<%= page === 'index' ? 'active' : '' %>">Home</a>
+      <a href="/projects" class="<%= page === 'projects' ? 'active' : '' %>">Projects</a>
+      <a href="/blog" class="<%= page === 'blog' ? 'active' : '' %>">Blog</a>
+      <a href="/contact" class="<%= page === 'contact' ? 'active' : '' %>">Contact</a>
+    </div>
+    <div class="nav-actions">
+      <button class="theme-toggle" data-theme-toggle aria-label="Toggle theme">☾</button>
+      <button class="nav-toggle" data-nav-toggle aria-label="Toggle menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+</header>

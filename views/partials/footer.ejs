@@ -1,0 +1,12 @@
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <span>© <%= new Date().getFullYear() %> <%= settings.full_name %>. All rights reserved.</span>
+    <div class="social-links">
+      <% if (settings.github_url) { %><a href="<%= settings.github_url %>" target="_blank" rel="noopener">GitHub</a><% } %>
+      <% if (settings.linkedin_url) { %><a href="<%= settings.linkedin_url %>" target="_blank" rel="noopener">LinkedIn</a><% } %>
+      <% if (settings.twitter_url) { %><a href="<%= settings.twitter_url %>" target="_blank" rel="noopener">Twitter</a><% } %>
+      <% if (admin) { %><a href="/admin">Admin</a><% } %>
+    </div>
+  </div>
+</footer>
+<script src="/assets/js/main.js"></script>

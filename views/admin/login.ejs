@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><%- include("layout-head", { title: "Sign in" }) %></head>
+<body class="admin-body">
+  <div class="login-wrap">
+    <form class="login-card" method="post" action="/admin/login">
+      <h1>Sign in</h1>
+      <p class="login-sub">Admin access to your site.</p>
+
+      <% if (error) { %><div class="alert alert-error"><%= error %></div><% } %>
+
+      <input type="hidden" name="next" value="<%= next %>">
+
+      <div class="field">
+        <label for="username">Username</label>
+        <input type="text" id="username" name="username" autocomplete="username" required autofocus>
+      </div>
+      <div class="field">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" autocomplete="current-password" required>
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-block">Sign in</button>
+      <p class="login-foot"><a href="/">← Back to site</a></p>
+    </form>
+  </div>
+  <script src="/assets/js/main.js"></script>
+</body>
+</html>

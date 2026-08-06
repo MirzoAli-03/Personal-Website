@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><%- include("layout-head") %></head>
+<body class="admin-body">
+<%- include("nav") %>
+
+<main class="admin-main">
+  <div class="admin-container narrow">
+    <h1 class="admin-title">Site settings</h1>
+    <p class="muted">These fields drive the text on your public pages.</p>
+
+    <% if (saved) { %><div class="alert alert-ok">Settings saved.</div><% } %>
+
+    <form method="post" action="/admin/settings">
+      <section class="panel">
+        <h2 class="panel-title">Identity</h2>
+
+        <div class="field">
+          <label for="full_name">Your name</label>
+          <input type="text" id="full_name" name="full_name" required value="<%= settings.full_name %>">
+          <p class="muted small">Shown in the nav, footer, and page titles.</p>
+        </div>
+
+        <div class="field">
+          <label for="hero_heading">Home page heading</label>
+          <input type="text" id="hero_heading" name="hero_heading" value="<%= settings.hero_heading %>"
+                 placeholder="Building things at the intersection of code and curiosity.">
+        </div>
+
+        <div class="field">
+          <label for="tagline">Tagline</label>
+          <textarea id="tagline" name="tagline" rows="2"
+                    placeholder="The paragraph under your heading"><%= settings.tagline %></textarea>
+        </div>
+
+        <div class="field">
+          <label for="bio">About me</label>
+          <textarea id="bio" name="bio" rows="4"><%= settings.bio %></textarea>
+        </div>
+
+        <div class="field">
+          <label for="skills">Skills</label>
+          <input type="text" id="skills" name="skills" value="<%= (settings.skills || []).join(', ') %>"
+                 placeholder="JavaScript, Node.js, PostgreSQL">
+          <p class="muted small">Comma separated. Leave blank to hide the skills row.</p>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2 class="panel-title">Links</h2>
+
+        <div class="field">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" value="<%= settings.email %>">
+        </div>
+        <div class="field">
+          <label for="github_url">GitHub URL</label>
+          <input type="url" id="github_url" name="github_url" value="<%= settings.github_url %>" placeholder="https://github.com/you">
+        </div>
+        <div class="field">
+          <label for="linkedin_url">LinkedIn URL</label>
+          <input type="url" id="linkedin_url" name="linkedin_url" value="<%= settings.linkedin_url %>" placeholder="https://linkedin.com/in/you">
+        </div>
+        <div class="field">
+          <label for="twitter_url">Twitter URL</label>
+          <input type="url" id="twitter_url" name="twitter_url" value="<%= settings.twitter_url %>" placeholder="https://twitter.com/you">
+        </div>
+        <p class="muted small">Empty links are hidden from the footer.</p>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">Save settings</button>
+          <a href="/" target="_blank" rel="noopener" class="btn btn-secondary">Preview site ↗</a>
+        </div>
+      </section>
+    </form>
+  </div>
+</main>
+
+<script src="/assets/js/main.js"></script>
+</body>
+</html>

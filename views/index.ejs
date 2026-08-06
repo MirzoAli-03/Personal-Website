@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><%- include("partials/head", { title: null, description: settings.tagline }) %></head>
+<body>
+<%- include("partials/header") %>
+
+<main>
+  <section class="hero">
+    <div class="container">
+      <div class="hero-eyebrow">Hello, I'm</div>
+      <h1><%= settings.hero_heading || settings.full_name %></h1>
+      <% if (settings.tagline) { %><p class="lead"><%= settings.tagline %></p><% } %>
+      <div class="hero-actions">
+        <a href="/projects" class="btn btn-primary">View my work</a>
+        <a href="/contact" class="btn btn-secondary">Get in touch</a>
+      </div>
+    </div>
+  </section>
+
+  <% if (settings.bio || (settings.skills && settings.skills.length)) { %>
+  <section id="about">
+    <div class="container">
+      <div class="section-head"><h2>About me</h2></div>
+      <% if (settings.bio) { %><p class="section-intro"><%= settings.bio %></p><% } %>
+      <% if (settings.skills && settings.skills.length) { %>
+      <ul class="skills-list">
+        <% settings.skills.forEach(function (skill) { %><li><%= skill %></li><% }); %>
+      </ul>
+      <% } %>
+    </div>
+  </section>
+  <% } %>
+
+  <% if (projects.length) { %>
+  <section id="featured-projects">
+    <div class="container">
+      <div class="section-head">
+        <h2>Featured projects</h2>
+        <a href="/projects" class="see-all">See all projects →</a>
+      </div>
+      <div class="grid">
+        <% projects.forEach(function (p) { %>
+          <%- include("partials/project-card", { p: p }) %>
+        <% }); %>
+      </div>
+    </div>
+  </section>
+  <% } %>
+
+  <% if (posts.length) { %>
+  <section id="latest-posts">
+    <div class="container">
+      <div class="section-head">
+        <h2>Latest posts</h2>
+        <a href="/blog" class="see-all">See all posts →</a>
+      </div>
+      <div class="grid">
+        <% posts.forEach(function (post) { %>
+          <%- include("partials/post-card", { post: post }) %>
+        <% }); %>
+      </div>
+    </div>
+  </section>
+  <% } %>
+
+  <section id="contact-cta">
+    <div class="container">
+      <div class="contact-box">
+        <h2>Let's work together</h2>
+        <p>Have a project in mind or just want to say hi? My inbox is always open.</p>
+        <div class="contact-links">
+          <a href="/contact" class="btn btn-primary">Contact me</a>
+          <% if (settings.email) { %>
+            <a href="mailto:<%= settings.email %>" class="btn btn-secondary"><%= settings.email %></a>
+          <% } %>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<%- include("partials/footer") %>
+</body>
+</html>

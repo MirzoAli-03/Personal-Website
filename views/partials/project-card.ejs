@@ -1,0 +1,18 @@
+<a class="card" <% if (p.url) { %>href="<%= p.url %>" target="_blank" rel="noopener"<% } else { %>href="/projects"<% } %>>
+  <% if (p.cover_image_id) { %>
+    <img class="project-thumb" src="/images/<%= p.cover_image_id %>" alt="<%= p.title %>" loading="lazy">
+  <% } else { %>
+    <div class="project-thumb"></div>
+  <% } %>
+  <% if (p.tags && p.tags.length) { %>
+    <div class="tag-row">
+      <% p.tags.forEach(function (t) { %><span class="tag"><%= t %></span><% }); %>
+    </div>
+  <% } %>
+  <h3><%= p.title %></h3>
+  <% if (p.description) { %><p><%= p.description %></p><% } %>
+  <div class="card-meta">
+    <span><%= p.year || "" %></span>
+    <% if (p.url) { %><span class="card-link"><%= p.link_label || "View" %> →</span><% } %>
+  </div>
+</a>

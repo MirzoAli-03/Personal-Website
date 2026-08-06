@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><%- include("layout-head") %></head>
+<body class="admin-body">
+<%- include("nav") %>
+
+<main class="admin-main">
+  <div class="admin-container">
+    <div class="admin-title-row">
+      <h1 class="admin-title">Projects</h1>
+      <a href="/admin/projects/new" class="btn btn-primary">Add a project</a>
+    </div>
+
+    <section class="panel">
+      <% if (projects.length) { %>
+        <table class="admin-table">
+          <thead><tr><th></th><th>Title</th><th>Tags</th><th>Featured</th><th>Order</th><th></th></tr></thead>
+          <tbody>
+            <% projects.forEach(function (p) { %>
+              <tr>
+                <td class="thumb-cell">
+                  <% if (p.cover_image_id) { %>
+                    <img src="/images/<%= p.cover_image_id %>" alt="" class="row-thumb">
+                  <% } else { %>
+                    <div class="row-thumb row-thumb-empty"></div>
+                  <% } %>
+                </td>
+                <td>
+                  <a href="/admin/projects/<%= p.id %>/edit"><%= p.title %></a>
+                  <div class="muted small"><%= p.year %></div>
+                </td>
+                <td class="muted"><%= (p.tags || []).join(", ") %></td>
+                <td><%= p.featured ? "★" : "" %></td>
+                <td class="muted"><%= p.sort_order %></td>
+                <td class="right nowrap">
+                  <a href="/admin/projects/<%= p.id %>/edit" class="link">Edit</a>
+                  <form method="post" action="/admin/projects/<%= p.id %>/delete" class="inline"
+                        data-confirm="Delete this project? This cannot be undone.">
+                    <button type="submit" class="link link-danger">Delete</button>
+                  </form>
+                </td>
+              </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      <% } else { %>
+        <p class="empty">No projects yet. <a href="/admin/projects/new">Add your first one →</a></p>
+      <% } %>
+    </section>
+  </div>
+</main>
+
+<script src="/assets/js/main.js"></script>
+</body>
+</html>
