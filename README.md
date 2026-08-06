@@ -129,8 +129,19 @@ without exposing any values:
 - **`viewsDir: false`** → the EJS templates were not bundled; check the
   `includeFiles` block in `vercel.json`.
 
-A `FUNCTION_INVOCATION_FAILED` / 500 on Vercel almost always means a required
-environment variable is missing.
+`/healthz` never renders a template and never touches the database unless the
+config is complete, so it answers even when everything else is broken. If
+`/healthz` responds but other pages don't, the problem is templates or data —
+not the function itself.
+
+### Why a crash page instead of an error page
+
+Express treats an exception thrown *inside* an error handler as unhandled, which
+kills the whole serverless function and produces Vercel's
+`FUNCTION_INVOCATION_FAILED` with no detail. So the 404 handler, the error
+handler, and the config guard all render plain HTML from `server/fallback.js`
+rather than EJS — they must survive `views/` being absent, since that is one of
+the conditions they exist to report.
 
 ## Useful commands
 

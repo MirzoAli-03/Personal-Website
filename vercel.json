@@ -6,7 +6,12 @@
       "src": "api/index.js",
       "use": "@vercel/node",
       "config": {
-        "includeFiles": ["views/**", "assets/**"]
+        "includeFiles": [
+          "views/**",
+          "views/**/*",
+          "assets/**",
+          "assets/**/*"
+        ]
       }
     }
   ],
