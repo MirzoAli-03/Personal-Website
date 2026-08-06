@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Setup required</title>
+<link rel="stylesheet" href="/assets/css/style.css">
+</head>
+<body>
+<main>
+  <section class="hero">
+    <div class="container">
+      <div class="hero-eyebrow">Setup required</div>
+      <h1>This site isn't configured yet.</h1>
+      <p class="lead">
+        The server started, but these environment variables are missing:
+      </p>
+      <ul class="skills-list">
+        <% missing.forEach(function (name) { %><li><%= name %></li><% }); %>
+      </ul>
+      <p class="lead" style="margin-top:28px">
+        Add them in your host's dashboard (on Vercel: Project → Settings →
+        Environment Variables), then redeploy. Only the variable names are shown
+        here — never their values.
+      </p>
+    </div>
+  </section>
+</main>
+</body>
+</html>

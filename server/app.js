@@ -1,8 +1,10 @@
+const fs = require("fs");
 const path = require("path");
 const express = require("express");
 const cookieParser = require("cookie-parser");
 
 const { attachUser } = require("./auth");
+const { guard, missingVars } = require("./config-check");
 const publicRoutes = require("./routes/public");
 const adminRoutes = require("./routes/admin");
 const imageRoutes = require("./routes/images");
@@ -22,6 +24,30 @@ app.use(
   "/assets",
   express.static(path.join(__dirname, "..", "assets"), { maxAge: "1h" })
 );
+
+// Reports config and database reachability without exposing any values.
+app.get("/healthz", async (req, res) => {
+  const missing = missingVars();
+  const out = {
+    ok: missing.length === 0,
+    missingEnv: missing,
+    viewsDir: fs.existsSync(app.get("views")),
+    node: process.version,
+  };
+  if (missing.length === 0) {
+    try {
+      const { sql } = require("./db");
+      await sql`SELECT 1`;
+      out.database = "reachable";
+    } catch (err) {
+      out.ok = false;
+      out.database = `unreachable: ${err.message}`;
+    }
+  }
+  res.status(out.ok ? 200 : 503).json(out);
+});
+
+app.use(guard);
 
 app.use("/images", imageRoutes);
 app.use("/admin", adminRoutes);

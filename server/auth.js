@@ -5,13 +5,16 @@ const { sql } = require("./db");
 const COOKIE_NAME = "admin_session";
 const MAX_AGE_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
 
-if (!process.env.JWT_SECRET) {
-  throw new Error("JWT_SECRET is not set. See .env.example.");
+// Read at call time, not module load — see the note in db.js.
+function secret() {
+  if (!process.env.JWT_SECRET) {
+    throw new Error("JWT_SECRET is not set");
+  }
+  return process.env.JWT_SECRET;
 }
-const SECRET = process.env.JWT_SECRET;
 
 function issueSession(res, user) {
-  const token = jwt.sign({ sub: user.id, username: user.username }, SECRET, {
+  const token = jwt.sign({ sub: user.id, username: user.username }, secret(), {
     expiresIn: MAX_AGE_MS / 1000,
   });
   res.cookie(COOKIE_NAME, token, {
@@ -31,7 +34,7 @@ function readSession(req) {
   const token = req.cookies?.[COOKIE_NAME];
   if (!token) return null;
   try {
-    return jwt.verify(token, SECRET);
+    return jwt.verify(token, secret());
   } catch {
     return null;
   }

@@ -112,6 +112,26 @@ npm run setup
 
 It updates the existing user's hash in place.
 
+## Troubleshooting a deploy
+
+Visit `/healthz` on the deployed URL. It reports config and database status
+without exposing any values:
+
+```json
+{ "ok": true, "missingEnv": [], "viewsDir": true, "database": "reachable" }
+```
+
+- **`missingEnv` is non-empty** → add those variables in Vercel → Settings →
+  Environment Variables, then redeploy. The site serves a 503 page naming them
+  until you do.
+- **`database: "unreachable"`** → `DATABASE_URL` is set but wrong, or the Neon
+  password was rotated without updating it.
+- **`viewsDir: false`** → the EJS templates were not bundled; check the
+  `includeFiles` block in `vercel.json`.
+
+A `FUNCTION_INVOCATION_FAILED` / 500 on Vercel almost always means a required
+environment variable is missing.
+
 ## Useful commands
 
 ```bash
