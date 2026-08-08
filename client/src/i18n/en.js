@@ -67,6 +67,10 @@ export default {
   "login.submit": "Sign in",
   "login.submitting": "Signing in…",
 
+  "error.bad_credentials": "Incorrect username or password.",
+  "error.not_configured":
+    "The server is missing its database settings, so it cannot check your login. Add the environment variables in your hosting dashboard and redeploy.",
+
   "admin.viewSite": "View site",
   "admin.signOut": "Sign out",
   "admin.dashboard": "Dashboard",

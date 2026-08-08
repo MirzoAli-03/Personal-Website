@@ -38,7 +38,8 @@ export default function Login() {
       await login(username, password);
       navigate(destination, { replace: true });
     } catch (err) {
-      setError(err.message);
+      // Server errors arrive in English; translate the ones we know about.
+      setError(err.code ? t(`error.${err.code}`) : err.message);
     } finally {
       setBusy(false);
     }

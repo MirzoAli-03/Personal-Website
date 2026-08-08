@@ -21,7 +21,8 @@ function guard(req, res, next) {
   if (req.accepts("html") === "html") {
     return res.type("html").send(misconfiguredPage(missing));
   }
-  return res.json({ error: "Server not configured", missing });
+  // `code` lets the client show a translated message; `error` is the fallback.
+  return res.json({ error: "Server not configured", code: "not_configured", missing });
 }
 
 module.exports = { REQUIRED, missingVars, guard };

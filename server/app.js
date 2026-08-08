@@ -108,7 +108,7 @@ app.use((err, req, res, next) => {
         : err.message || "Server error";
 
     if (req.path.startsWith("/api/") || req.accepts("html") !== "html") {
-      return res.status(status).json({ error: message });
+      return res.status(status).json({ error: message, code: err.code || undefined });
     }
     res.status(status).type("html").send(errorPage(message));
   } catch (fatal) {

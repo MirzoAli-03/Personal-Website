@@ -31,6 +31,9 @@ async function request(path, { method = "GET", body, isForm = false } = {}) {
   if (!res.ok) {
     const err = new Error(data?.error || `Request failed (${res.status})`);
     err.status = res.status;
+    // Known failures carry a code the UI can translate; message is the fallback.
+    err.code = data?.code;
+    err.missing = data?.missing;
     throw err;
   }
   return data;

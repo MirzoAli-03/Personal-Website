@@ -24,7 +24,9 @@ const upload = multer({
 // Wraps async handlers so rejections reach the error middleware.
 const wrap = (fn) => (req, res, next) => Promise.resolve(fn(req, res, next)).catch(next);
 
-const bad = (message, status = 400) => Object.assign(new Error(message), { status });
+// `code` is optional and lets the client translate known failures.
+const bad = (message, status = 400, code = null) =>
+  Object.assign(new Error(message), { status, code });
 
 /* ---------------- Auth ---------------- */
 
@@ -33,7 +35,7 @@ router.post(
   wrap(async (req, res) => {
     const { username, password } = req.body || {};
     const user = await verifyCredentials(String(username || ""), String(password || ""));
-    if (!user) throw bad("Incorrect username or password.", 401);
+    if (!user) throw bad("Incorrect username or password.", 401, "bad_credentials");
     issueSession(res, user);
     res.json({ user });
   })
