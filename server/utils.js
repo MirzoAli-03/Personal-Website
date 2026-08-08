@@ -1,6 +1,23 @@
-function slugify(input) {
+// Russian and Tajik Cyrillic to Latin. Without this a Cyrillic title slugs to
+// nothing and falls back to a timestamp, so every non-English post would get an
+// unreadable URL.
+const TRANSLIT = {
+  а: "a", б: "b", в: "v", г: "g", д: "d", е: "e", ё: "yo", ж: "zh", з: "z",
+  и: "i", й: "y", к: "k", л: "l", м: "m", н: "n", о: "o", п: "p", р: "r",
+  с: "s", т: "t", у: "u", ф: "f", х: "kh", ц: "ts", ч: "ch", ш: "sh",
+  щ: "shch", ъ: "", ы: "y", ь: "", э: "e", ю: "yu", я: "ya",
+  // Tajik-specific letters
+  ғ: "gh", ӣ: "i", қ: "q", ӯ: "u", ҳ: "h", ҷ: "j",
+};
+
+function transliterate(input) {
   return String(input)
     .toLowerCase()
+    .replace(/[Ѐ-ӿ]/g, (char) => (char in TRANSLIT ? TRANSLIT[char] : ""));
+}
+
+function slugify(input) {
+  return transliterate(input)
     .normalize("NFKD")
     .replace(/[̀-ͯ]/g, "")
     .replace(/[^a-z0-9]+/g, "-")
@@ -43,4 +60,4 @@ function toIntOrNull(value) {
   return Number.isInteger(n) && n > 0 ? n : null;
 }
 
-module.exports = { slugify, formatDate, readingTime, parseTags, toBool, toIntOrNull };
+module.exports = { slugify, transliterate, formatDate, readingTime, parseTags, toBool, toIntOrNull };

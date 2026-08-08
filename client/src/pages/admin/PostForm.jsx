@@ -25,9 +25,20 @@ import ConfirmDialog from "../../components/ConfirmDialog";
 import { Loading, ErrorState } from "../../components/PageState";
 import { useDocumentTitle } from "../../hooks/useDocumentTitle";
 
+// Must stay in step with slugify in server/utils.js — this only previews the
+// URL, but a preview that disagrees with what gets saved is worse than none.
+const TRANSLIT = {
+  а: "a", б: "b", в: "v", г: "g", д: "d", е: "e", ё: "yo", ж: "zh", з: "z",
+  и: "i", й: "y", к: "k", л: "l", м: "m", н: "n", о: "o", п: "p", р: "r",
+  с: "s", т: "t", у: "u", ф: "f", х: "kh", ц: "ts", ч: "ch", ш: "sh",
+  щ: "shch", ъ: "", ы: "y", ь: "", э: "e", ю: "yu", я: "ya",
+  ғ: "gh", ӣ: "i", қ: "q", ӯ: "u", ҳ: "h", ҷ: "j",
+};
+
 function slugify(input) {
   return String(input)
     .toLowerCase()
+    .replace(/[Ѐ-ӿ]/g, (char) => (char in TRANSLIT ? TRANSLIT[char] : ""))
     .normalize("NFKD")
     .replace(/[̀-ͯ]/g, "")
     .replace(/[^a-z0-9]+/g, "-")
