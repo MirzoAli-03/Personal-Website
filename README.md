@@ -125,10 +125,12 @@ plural forms, which have three cases (`1 черновик`, `2 черновик�
 
 ## Environment variables
 
+**`DATABASE_URL` is the only variable the app needs to run.**
+
 | Variable | Purpose |
 |---|---|
-| `DATABASE_URL` | Neon connection string |
-| `JWT_SECRET` | Signs session cookies. Random, secret, required. |
+| `DATABASE_URL` | Neon connection string. Required. |
+| `JWT_SECRET` | Optional. Signs session cookies. If absent, a stable key is derived from `DATABASE_URL`, so hosts that inject the database URL automatically need no further setup. Anyone holding `DATABASE_URL` can already read and write every row, so deriving from it grants no extra access. |
 | `ADMIN_USERNAME` | Login name (default `admin`) |
 | `ADMIN_PASSWORD` | Only read by `npm run setup`; blank it afterwards |
 | `NODE_ENV` | `production` enables the `Secure` cookie flag |
@@ -139,9 +141,20 @@ plural forms, which have three cases (`1 черновик`, `2 черновик�
 
 1. Push to a Git repo (`.env` is excluded by `.gitignore`).
 2. Import the repo at vercel.com.
-3. Add **`DATABASE_URL`** and **`JWT_SECRET`** under Settings → Environment
-   Variables. Vercel sets `NODE_ENV=production` itself.
-4. Deploy.
+3. Give the project **`DATABASE_URL`**, either way:
+   - **Integrations → Neon** — connect your Neon project and Vercel sets
+     `DATABASE_URL` for you. Fewest steps, nothing to paste.
+   - Or **Settings → Environment Variables** by hand, ticking Production,
+     Preview, and Development.
+4. **Redeploy.** Variables are only picked up by a new deployment — saving one
+   does not rebuild anything.
+
+Vercel sets `NODE_ENV=production` itself. `ADMIN_PASSWORD` is not needed in
+production: the account already lives in Neon, and only `npm run setup` reads it.
+
+Environment variables are stored **per Vercel project**. Creating a new project
+gives you a fresh empty environment, so a redeploy into a different project will
+appear to lose them.
 
 `vercel.json` builds the React app, serves `client/dist` from the CDN, and routes
 only `/api/*`, `/images/*`, and `/healthz` to the serverless function. Everything

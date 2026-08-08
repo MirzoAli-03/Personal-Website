@@ -1,3 +1,4 @@
+const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const { sql } = require("./db");
@@ -5,12 +6,36 @@ const { sql } = require("./db");
 const COOKIE_NAME = "admin_session";
 const MAX_AGE_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
 
+let derived = null;
+
+// Prefer an explicit JWT_SECRET. Without one, derive a stable key from
+// DATABASE_URL so the app needs only a single environment variable to run —
+// which matters because a host's Neon integration can set DATABASE_URL
+// automatically while JWT_SECRET would always be manual.
+//
+// This gives up nothing: anyone holding DATABASE_URL can already read and write
+// every row directly, so being able to forge a session grants no further access.
+// Rotating the database password invalidates existing sessions, which is
+// correct behaviour anyway.
+//
 // Read at call time, not module load — see the note in db.js.
 function secret() {
-  if (!process.env.JWT_SECRET) {
-    throw new Error("JWT_SECRET is not set");
+  if (process.env.JWT_SECRET) return process.env.JWT_SECRET;
+
+  if (!process.env.DATABASE_URL) {
+    throw new Error("Neither JWT_SECRET nor DATABASE_URL is set");
   }
-  return process.env.JWT_SECRET;
+  if (!derived) {
+    derived = crypto
+      .createHmac("sha256", process.env.DATABASE_URL)
+      .update("admin-session-key:v1")
+      .digest("base64url");
+  }
+  return derived;
+}
+
+function secretSource() {
+  return process.env.JWT_SECRET ? "JWT_SECRET" : "derived from DATABASE_URL";
 }
 
 function issueSession(res, user) {
@@ -78,4 +103,5 @@ module.exports = {
   attachUser,
   requireAuth,
   verifyCredentials,
+  secretSource,
 };

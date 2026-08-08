@@ -55,6 +55,7 @@ app.get("/healthz", async (req, res) => {
   }
 
   if (missing.length === 0) {
+    out.sessionKey = require("./auth").secretSource();
     try {
       const { sql } = require("./db");
       await sql`SELECT 1`;

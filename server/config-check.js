@@ -1,6 +1,9 @@
 const { misconfiguredPage } = require("./fallback");
 
-const REQUIRED = ["DATABASE_URL", "JWT_SECRET"];
+// DATABASE_URL is the only hard requirement. JWT_SECRET is optional — auth.js
+// derives a stable session key from DATABASE_URL when it is absent, so a host
+// that can inject the database URL automatically needs no manual setup at all.
+const REQUIRED = ["DATABASE_URL"];
 
 function missingVars() {
   return REQUIRED.filter((name) => !process.env[name]);
