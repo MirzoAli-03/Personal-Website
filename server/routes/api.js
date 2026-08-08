@@ -245,9 +245,12 @@ router.put(
     const b = req.body || {};
     await q.updateSettings({
       full_name: String(b.full_name || "").trim() || "Your Name",
+      role: String(b.role || "").trim(),
+      location: String(b.location || "").trim(),
       tagline: String(b.tagline || "").trim(),
       hero_heading: String(b.hero_heading || "").trim(),
       bio: String(b.bio || "").trim(),
+      avatar_image_id: toIntOrNull(b.avatar_image_id),
       skills: parseTags(b.skills),
       email: String(b.email || "").trim(),
       github_url: String(b.github_url || "").trim(),

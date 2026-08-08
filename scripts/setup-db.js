@@ -69,9 +69,12 @@ async function main() {
     CREATE TABLE IF NOT EXISTS site_settings (
       id            INTEGER PRIMARY KEY DEFAULT 1 CHECK (id = 1),
       full_name     TEXT NOT NULL DEFAULT 'Your Name',
+      role          TEXT NOT NULL DEFAULT '',
+      location      TEXT NOT NULL DEFAULT '',
       tagline       TEXT NOT NULL DEFAULT '',
       hero_heading  TEXT NOT NULL DEFAULT '',
       bio           TEXT NOT NULL DEFAULT '',
+      avatar_image_id INTEGER,
       skills        TEXT[] NOT NULL DEFAULT '{}',
       email         TEXT NOT NULL DEFAULT '',
       github_url    TEXT NOT NULL DEFAULT '',
@@ -80,6 +83,16 @@ async function main() {
       updated_at    TIMESTAMPTZ NOT NULL DEFAULT now()
     )
   `;
+
+  // Migrations for databases created before a column existed. CREATE TABLE
+  // IF NOT EXISTS above is a no-op once the table is there, so new columns
+  // have to be added explicitly.
+  await sql`
+    ALTER TABLE site_settings
+    ADD COLUMN IF NOT EXISTS avatar_image_id INTEGER REFERENCES images(id) ON DELETE SET NULL
+  `;
+  await sql`ALTER TABLE site_settings ADD COLUMN IF NOT EXISTS role TEXT NOT NULL DEFAULT ''`;
+  await sql`ALTER TABLE site_settings ADD COLUMN IF NOT EXISTS location TEXT NOT NULL DEFAULT ''`;
 
   await sql`CREATE INDEX IF NOT EXISTS posts_published_idx ON posts (published, published_at DESC)`;
   await sql`CREATE INDEX IF NOT EXISTS projects_sort_idx ON projects (sort_order, id)`;

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import {
   Alert,
+  Avatar,
   Box,
   Button,
   Paper,
@@ -14,6 +15,7 @@ import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import { api } from "../../api";
 import { useApp } from "../../context/AppContext";
 import { Loading } from "../../components/PageState";
+import ImagePicker from "../../components/ImagePicker";
 import { useDocumentTitle } from "../../hooks/useDocumentTitle";
 
 export default function Settings() {
@@ -21,14 +23,25 @@ export default function Settings() {
   const { settings, refreshSettings } = useApp();
 
   const [form, setForm] = useState(null);
+  const [images, setImages] = useState([]);
+  const [pickerOpen, setPickerOpen] = useState(false);
   const [error, setError] = useState(null);
   const [saved, setSaved] = useState(false);
   const [busy, setBusy] = useState(false);
+
+  const loadImages = () => api.listImages().then(setImages);
+
+  useEffect(() => {
+    loadImages().catch(() => {});
+  }, []);
 
   useEffect(() => {
     if (!settings) return;
     setForm({
       full_name: settings.full_name || "",
+      role: settings.role || "",
+      location: settings.location || "",
+      avatar_image_id: settings.avatar_image_id ?? "",
       hero_heading: settings.hero_heading || "",
       tagline: settings.tagline || "",
       bio: settings.bio || "",
@@ -49,7 +62,7 @@ export default function Settings() {
     setBusy(true);
     setError(null);
     try {
-      await api.updateSettings(form);
+      await api.updateSettings({ ...form, avatar_image_id: form.avatar_image_id || null });
       await refreshSettings();
       setSaved(true);
     } catch (err) {
@@ -75,14 +88,56 @@ export default function Settings() {
           Identity
         </Typography>
         <Stack spacing={2.5} sx={{ mt: 2 }}>
-          <TextField
-            label="Your name"
-            value={form.full_name}
-            onChange={set("full_name")}
-            required
-            fullWidth
-            helperText="Shown in the nav, footer, and page titles"
-          />
+          <Stack direction={{ xs: "column", sm: "row" }} spacing={3} alignItems="flex-start">
+            <Box sx={{ flex: "none", textAlign: "center" }}>
+              <Avatar
+                src={form.avatar_image_id ? `/images/${form.avatar_image_id}` : undefined}
+                sx={{ width: 96, height: 96, mb: 1, fontSize: "2rem" }}
+              >
+                {form.full_name?.[0]?.toUpperCase() || "?"}
+              </Avatar>
+              <Button size="small" onClick={() => setPickerOpen(true)}>
+                {form.avatar_image_id ? "Change" : "Add photo"}
+              </Button>
+              {form.avatar_image_id && (
+                <Button
+                  size="small"
+                  color="error"
+                  onClick={() => setForm((p) => ({ ...p, avatar_image_id: "" }))}
+                >
+                  Remove
+                </Button>
+              )}
+            </Box>
+
+            <Stack spacing={2.5} sx={{ flexGrow: 1, width: "100%" }}>
+              <TextField
+                label="Your name"
+                value={form.full_name}
+                onChange={set("full_name")}
+                required
+                fullWidth
+                helperText="Shown in the nav, footer, and page titles"
+              />
+              <Stack direction={{ xs: "column", sm: "row" }} spacing={2}>
+                <TextField
+                  label="Role"
+                  value={form.role}
+                  onChange={set("role")}
+                  fullWidth
+                  placeholder="Backend engineer"
+                />
+                <TextField
+                  label="Location"
+                  value={form.location}
+                  onChange={set("location")}
+                  fullWidth
+                  placeholder="Dushanbe"
+                />
+              </Stack>
+            </Stack>
+          </Stack>
+
           <TextField
             label="Home page heading"
             value={form.hero_heading}
@@ -133,6 +188,17 @@ export default function Settings() {
           </Stack>
         </Stack>
       </Paper>
+
+      <ImagePicker
+        open={pickerOpen}
+        images={images}
+        onSelect={(id) => {
+          setForm((p) => ({ ...p, avatar_image_id: id }));
+          setPickerOpen(false);
+        }}
+        onClose={() => setPickerOpen(false)}
+        onUploaded={loadImages}
+      />
 
       <Snackbar
         open={saved}

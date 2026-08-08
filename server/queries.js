@@ -10,16 +10,19 @@ async function getSettings() {
 async function updateSettings(data) {
   await sql`
     UPDATE site_settings SET
-      full_name    = ${data.full_name},
-      tagline      = ${data.tagline},
-      hero_heading = ${data.hero_heading},
-      bio          = ${data.bio},
-      skills       = ${data.skills},
-      email        = ${data.email},
-      github_url   = ${data.github_url},
-      linkedin_url = ${data.linkedin_url},
-      twitter_url  = ${data.twitter_url},
-      updated_at   = now()
+      full_name       = ${data.full_name},
+      role            = ${data.role},
+      location        = ${data.location},
+      tagline         = ${data.tagline},
+      hero_heading    = ${data.hero_heading},
+      bio             = ${data.bio},
+      avatar_image_id = ${data.avatar_image_id},
+      skills          = ${data.skills},
+      email           = ${data.email},
+      github_url      = ${data.github_url},
+      linkedin_url    = ${data.linkedin_url},
+      twitter_url     = ${data.twitter_url},
+      updated_at      = now()
     WHERE id = 1
   `;
 }

@@ -18,8 +18,18 @@ export function ErrorState({ error }) {
 
 export function Empty({ children }) {
   return (
-    <Typography color="text.secondary" sx={{ py: 6, textAlign: "center" }}>
-      {children}
-    </Typography>
+    <Box
+      sx={{
+        py: 8,
+        px: 3,
+        textAlign: "center",
+        border: 1,
+        borderStyle: "dashed",
+        borderColor: "divider",
+        borderRadius: 2,
+      }}
+    >
+      <Typography color="text.secondary">{children}</Typography>
+    </Box>
   );
 }

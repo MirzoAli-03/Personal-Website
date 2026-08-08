@@ -34,25 +34,68 @@ export default function Home() {
 
   return (
     <>
-      <Container maxWidth="lg" sx={{ pt: { xs: 8, md: 12 }, pb: 6 }}>
-        <Typography variant="overline" color="primary" fontWeight={700}>
-          Hello, I'm
-        </Typography>
-        <Typography variant="h1" sx={{ fontSize: { xs: "2.2rem", md: "3.2rem" }, maxWidth: "18ch", mb: 2 }}>
-          {settings?.hero_heading || settings?.full_name}
-        </Typography>
-        {settings?.tagline && (
-          <Typography variant="h6" color="text.secondary" sx={{ maxWidth: "56ch", fontWeight: 400, mb: 4 }}>
-            {settings.tagline}
-          </Typography>
-        )}
-        <Stack direction="row" spacing={2} flexWrap="wrap" useFlexGap>
-          <Button component={RouterLink} to="/projects" variant="contained" size="large">
-            View my work
-          </Button>
-          <Button component={RouterLink} to="/contact" variant="outlined" size="large">
-            Get in touch
-          </Button>
+      <Container maxWidth="lg" sx={{ pt: { xs: 7, md: 11 }, pb: 6 }}>
+        <Stack
+          direction={{ xs: "column-reverse", md: "row" }}
+          spacing={{ xs: 4, md: 7 }}
+          alignItems={{ xs: "flex-start", md: "center" }}
+        >
+          <Box sx={{ flex: 1, minWidth: 0 }}>
+            {(settings?.role || settings?.location) && (
+              <Typography variant="overline" color="primary" fontWeight={700} letterSpacing=".12em">
+                {[settings.role, settings.location].filter(Boolean).join(" · ")}
+              </Typography>
+            )}
+            {/* Deliberate scale jump: the headline is the only large thing on
+                the page, so the eye has somewhere to land. */}
+            <Typography
+              variant="h1"
+              sx={{
+                fontSize: { xs: "2.4rem", sm: "3rem", md: "3.9rem" },
+                lineHeight: 1.04,
+                letterSpacing: "-.035em",
+                maxWidth: "16ch",
+                mt: 1,
+                mb: 2.5,
+                textWrap: "balance",
+              }}
+            >
+              {settings?.hero_heading || settings?.full_name}
+            </Typography>
+            {settings?.tagline && (
+              <Typography
+                color="text.secondary"
+                sx={{ maxWidth: "50ch", fontSize: "1.08rem", mb: 4 }}
+              >
+                {settings.tagline}
+              </Typography>
+            )}
+            <Stack direction="row" spacing={2} flexWrap="wrap" useFlexGap>
+              <Button component={RouterLink} to="/projects" variant="contained" size="large">
+                View my work
+              </Button>
+              <Button component={RouterLink} to="/contact" variant="outlined" size="large">
+                Get in touch
+              </Button>
+            </Stack>
+          </Box>
+
+          {settings?.avatar_image_id && (
+            <Box
+              component="img"
+              src={`/images/${settings.avatar_image_id}`}
+              alt={settings.full_name}
+              sx={{
+                flex: "none",
+                width: { xs: 128, md: 260 },
+                height: { xs: 128, md: 260 },
+                objectFit: "cover",
+                borderRadius: "50%",
+                border: 1,
+                borderColor: "divider",
+              }}
+            />
+          )}
         </Stack>
       </Container>
 
