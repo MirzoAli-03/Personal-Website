@@ -162,8 +162,10 @@ Visit `/healthz`. It reports config and database status without exposing values:
   site serves a 503 page naming them until you do.
 - **`database: "unreachable"`** → `DATABASE_URL` is set but wrong, or the Neon
   password was rotated without updating it.
-- **`clientBuilt: false`** → the Vite build did not run or did not land where the
-  server expects.
+- **`clientBuilt: false`** → only reported when Express is serving the bundle
+  itself (local `npm run dev`); means the Vite build did not run. On Vercel the
+  bundle comes from the CDN, so this field is absent and `clientServedBy` reads
+  `"cdn"` instead.
 
 ### Why a crash page instead of an error page
 

@@ -40,9 +40,20 @@ app.get("/healthz", async (req, res) => {
   const out = {
     ok: missing.length === 0,
     missingEnv: missing,
-    clientBuilt: Boolean(clientDist),
     node: process.version,
   };
+
+  // On Vercel the React bundle is served from the CDN, not by this function, so
+  // client/dist is legitimately absent here — reporting it as a failure sends
+  // people hunting for a broken build that isn't broken.
+  if (process.env.VERCEL) {
+    out.clientServedBy = "cdn";
+  } else {
+    out.clientServedBy = "express";
+    out.clientBuilt = Boolean(clientDist);
+    if (!clientDist) out.ok = false;
+  }
+
   if (missing.length === 0) {
     try {
       const { sql } = require("./db");
