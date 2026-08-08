@@ -1,9 +1,7 @@
-// Plain-HTML responses with zero template dependency.
-//
-// Everything here must work when views/ is missing entirely — these are the
-// paths that run *because* something is already broken, so a failure inside
-// them (e.g. res.render throwing) becomes an unhandled exception and crashes
-// the whole serverless function.
+// Plain-HTML responses for the paths that run *because* something is already
+// broken — a missing client build, absent config, an unhandled error. They must
+// not depend on the React bundle or any template, since an exception thrown
+// inside an Express error handler crashes the whole serverless function.
 
 function escape(s) {
   return String(s).replace(/[&<>"']/g, (c) => ({
@@ -52,21 +50,4 @@ function errorPage(message) {
     `<p>${escape(message)}</p><p><a href="/">Go home</a></p>`);
 }
 
-function notFoundPage() {
-  return page("Not found", "Page not found",
-    `<p>That page doesn't exist, or it may have moved.</p><p><a href="/">Go home</a></p>`);
-}
-
-// Attempts a normal template render, falling back to plain HTML if the view
-// engine fails for any reason (missing templates, bad locals, bundling issues).
-function renderSafe(res, view, locals, fallbackHtml) {
-  res.render(view, locals, (err, html) => {
-    if (err) {
-      console.error(`View "${view}" failed to render:`, err.message);
-      return res.type("html").send(fallbackHtml);
-    }
-    res.type("html").send(html);
-  });
-}
-
-module.exports = { page, misconfiguredPage, errorPage, notFoundPage, renderSafe };
+module.exports = { page, misconfiguredPage, errorPage };

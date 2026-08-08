@@ -5,49 +5,42 @@ const cookieParser = require("cookie-parser");
 
 const { attachUser } = require("./auth");
 const { guard, missingVars } = require("./config-check");
-const { errorPage, notFoundPage, renderSafe } = require("./fallback");
-const publicRoutes = require("./routes/public");
-const adminRoutes = require("./routes/admin");
+const { errorPage } = require("./fallback");
+const apiRoutes = require("./routes/api");
 const imageRoutes = require("./routes/images");
 
-// Serverless bundlers place the app root differently than a local checkout, so
-// probe the plausible locations rather than assuming one.
-function resolveViewsDir() {
+const ROOT = path.join(__dirname, "..");
+
+// Serverless bundlers lay the app root out differently than a local checkout,
+// so probe the plausible locations rather than assuming one.
+function resolveDir(name) {
   const candidates = [
-    path.join(__dirname, "..", "views"),
-    path.join(process.cwd(), "views"),
-    path.join("/var/task", "views"),
+    path.join(ROOT, name),
+    path.join(process.cwd(), name),
+    path.join("/var/task", name),
   ];
-  const found = candidates.find((dir) => fs.existsSync(dir));
-  if (!found) {
-    console.error("views/ not found. Tried:", candidates.join(", "));
-  }
-  return found || candidates[0];
+  return candidates.find((dir) => fs.existsSync(dir)) || null;
 }
+
+const clientDist = resolveDir(path.join("client", "dist"));
 
 const app = express();
 
-app.set("view engine", "ejs");
-app.set("views", resolveViewsDir());
 app.set("trust proxy", 1);
 
-app.use(express.urlencoded({ extended: true, limit: "1mb" }));
 app.use(express.json({ limit: "1mb" }));
+app.use(express.urlencoded({ extended: true, limit: "1mb" }));
 app.use(cookieParser());
 app.use(attachUser);
 
-app.use(
-  "/assets",
-  express.static(path.join(__dirname, "..", "assets"), { maxAge: "1h" })
-);
-
-// Reports config and database reachability without exposing any values.
+// Answers even when nothing else can: no templates, no database unless
+// the config is complete.
 app.get("/healthz", async (req, res) => {
   const missing = missingVars();
   const out = {
     ok: missing.length === 0,
     missingEnv: missing,
-    viewsDir: fs.existsSync(app.get("views")),
+    clientBuilt: Boolean(clientDist),
     node: process.version,
   };
   if (missing.length === 0) {
@@ -65,16 +58,40 @@ app.get("/healthz", async (req, res) => {
 
 app.use(guard);
 
+app.use("/api", apiRoutes);
 app.use("/images", imageRoutes);
-app.use("/admin", adminRoutes);
-app.use("/", publicRoutes);
+
+// Built React bundle. Hashed assets are immutable; index.html must not be
+// cached or clients pin to a stale build.
+if (clientDist) {
+  app.use(
+    express.static(clientDist, {
+      index: false,
+      setHeaders(res, filePath) {
+        if (filePath.endsWith("index.html")) {
+          res.setHeader("Cache-Control", "no-cache");
+        } else if (filePath.includes(`${path.sep}assets${path.sep}`)) {
+          res.setHeader("Cache-Control", "public, max-age=31536000, immutable");
+        }
+      },
+    })
+  );
+}
+
+// Client-side routing: every non-API path returns the SPA shell.
+app.get("*", (req, res, next) => {
+  if (req.path.startsWith("/api/") || req.path.startsWith("/images/")) return next();
+  if (!clientDist) {
+    return res
+      .status(503)
+      .type("html")
+      .send(errorPage("The client bundle is missing. Run `npm run build` and redeploy."));
+  }
+  res.sendFile(path.join(clientDist, "index.html"));
+});
 
 app.use((req, res) => {
-  res.status(404);
-  if (req.accepts("html") !== "html") {
-    return res.json({ error: "Not found" });
-  }
-  renderSafe(res, "404", { title: "Not found" }, notFoundPage());
+  res.status(404).json({ error: "Not found" });
 });
 
 // Must never throw: an exception raised inside an Express error handler is
@@ -83,17 +100,17 @@ app.use((req, res) => {
 app.use((err, req, res, next) => {
   console.error(err);
   try {
+    if (res.headersSent) return;
     const status = err.status || 500;
     const message =
-      process.env.NODE_ENV === "production" ? "Server error" : err.message;
+      status >= 500 && process.env.NODE_ENV === "production"
+        ? "Server error"
+        : err.message || "Server error";
 
-    if (res.headersSent) return;
-
-    res.status(status);
-    if (req.path.startsWith("/admin/api/") || req.accepts("html") !== "html") {
-      return res.json({ error: message });
+    if (req.path.startsWith("/api/") || req.accepts("html") !== "html") {
+      return res.status(status).json({ error: message });
     }
-    res.type("html").send(errorPage(message));
+    res.status(status).type("html").send(errorPage(message));
   } catch (fatal) {
     console.error("Error handler itself failed:", fatal);
     if (!res.headersSent) res.status(500).type("text/plain").send("Server error");

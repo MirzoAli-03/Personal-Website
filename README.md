@@ -1,18 +1,18 @@
 # Personal Website + Admin Panel
 
-Server-rendered personal site (blog, portfolio, contact) with a password-protected
-admin panel. Content lives in **Neon Postgres**; images are stored in the database
-as `bytea`, so there is no external file storage to configure.
+Personal site (blog, portfolio, contact) with a password-protected admin panel.
+React front end, Express JSON API, content in **Neon Postgres**. Images are stored
+in the database as `bytea`, so there is no external file storage to configure.
 
-**Stack:** Node + Express + EJS · Neon serverless Postgres · JWT cookie auth · Vercel
+**Stack:** React 18 + Vite + MUI · Express · Neon serverless Postgres · JWT cookie auth · Vercel
 
 ## Quick start
 
 ```bash
-npm install
+npm install && npm run build
 ```
 
-Then create your admin account (set `ADMIN_PASSWORD` in `.env` first):
+Create your admin account (set `ADMIN_PASSWORD` in `.env` first):
 
 ```bash
 npm run setup
@@ -22,8 +22,22 @@ npm run setup
 npm run dev
 ```
 
-- Public site → http://localhost:5173
-- Admin panel → http://localhost:5173/admin
+- Site → http://localhost:5173
+- Admin → http://localhost:5173/admin
+
+`npm run dev` serves the **built** React bundle from Express. For hot reload while
+working on the UI, run the API and the Vite dev server side by side:
+
+```bash
+npm run dev
+```
+
+```bash
+npm run dev:client
+```
+
+Then use http://localhost:5174 — Vite proxies `/api`, `/images`, and `/healthz`
+to Express on 5173, so cookies stay same-origin.
 
 ## Structure
 
@@ -31,17 +45,23 @@ npm run dev
 api/index.js          Vercel serverless entry (exports the Express app)
 server/
   index.js            Local dev server
-  app.js              Express setup, middleware, error handling
-  db.js               Neon connection
-  auth.js             JWT cookie sessions, bcrypt, requireAuth
+  app.js              Express setup, static hosting, error handling
+  db.js               Neon connection (lazy — see note below)
+  auth.js             JWT cookie sessions, bcrypt
   queries.js          All SQL, in one place
-  utils.js            slugify, dates, reading time
+  config-check.js     Guards against missing env vars
+  fallback.js         Template-free error pages
   routes/
-    public.js         Home, projects, blog, post, contact
-    admin.js          Login + full CRUD
+    api.js            The whole JSON API
     images.js         Serves image bytes from Postgres
-views/                EJS templates (public + admin/)
-assets/css|js         Styles and client scripts
+client/
+  src/
+    api.js            Fetch wrapper + browser-side image downscaling
+    theme.js          MUI theme, light and dark
+    context/          Settings, session, and theme state
+    components/       Layouts, cards, editor, image picker
+    pages/            Public pages
+    pages/admin/      Admin panel
 scripts/
   setup-db.js         Creates tables + admin user (safe to re-run)
   db-info.js          Prints schema and row counts
@@ -52,29 +72,31 @@ scripts/
 | Section | What you can do |
 |---|---|
 | **Dashboard** | Counts for posts, projects, images, storage used |
-| **Posts** | Rich-text editor, cover image, tag, auto slug, publish/draft toggle, delete |
-| **Projects** | Title, description, tags, link, year, cover, featured flag, sort order |
+| **Posts** | Rich-text editor, cover image, tag, auto slug, publish/draft, delete |
+| **Projects** | Title, description, tags, link, year, cover, featured, sort order |
 | **Images** | Bulk upload, browse, copy URL, delete |
 | **Settings** | Name, heading, tagline, bio, skills, email, social links |
 
-Drafts are invisible publicly — they're excluded from `/blog` and return 404 by
-direct URL until you tick **Published**.
+Drafts are invisible publicly — excluded from the blog list and 404 by direct URL
+until you tick **Published**.
 
 ### Images
 
 Uploads are downscaled to 1600px and converted to WebP **in your browser** before
-being sent, which keeps requests under Vercel's ~4.5MB body limit and keeps the
-database small. A 2.9MB PNG typically lands around 13KB. Server-side limits: 4MB
-per file, and only JPEG/PNG/WebP/GIF/AVIF are accepted.
-
-Images are served from `/images/:id` with a one-year immutable cache header.
+being sent, which keeps requests under Vercel's ~4.5MB body limit and the database
+small. A 2.9MB PNG lands around 14KB. Server limits: 4MB per file, and only
+JPEG/PNG/WebP/GIF/AVIF are accepted. Images are served from `/images/:id` with a
+one-year immutable cache header.
 
 ### Post bodies
 
-The editor stores HTML, and post bodies are rendered unescaped so your formatting
-works. That is safe here because only you can log in — but it does mean **anyone with
-admin access can inject scripts into your site**. Keep the password strong and don't
-share the account.
+The editor stores HTML and post bodies are rendered unescaped so your formatting
+works. That is safe because only you can log in — but it means **anyone with admin
+access can inject scripts into your site**. Keep the password strong.
+
+The editor uses `contenteditable` with `document.execCommand`. It is deprecated but
+universally supported and dependency-free; swap in TipTap if you ever need tables,
+collaborative editing, or a real undo stack.
 
 ## Environment variables
 
@@ -90,58 +112,57 @@ share the account.
 
 ## Deploying to Vercel
 
-1. Push this folder to a Git repo (`.env` is excluded by `.gitignore`).
-2. Import the repo at vercel.com — no build command needed.
-3. Add **`DATABASE_URL`** and **`JWT_SECRET`** under Settings → Environment Variables,
-   and set **`NODE_ENV`** to `production`.
+1. Push to a Git repo (`.env` is excluded by `.gitignore`).
+2. Import the repo at vercel.com.
+3. Add **`DATABASE_URL`** and **`JWT_SECRET`** under Settings → Environment
+   Variables. Vercel sets `NODE_ENV=production` itself.
 4. Deploy.
 
-`vercel.json` routes every request to the Express app and explicitly bundles
-`views/` and `assets/`, which Vercel's file tracing would otherwise miss.
+`vercel.json` builds the React app, serves `client/dist` from the CDN, and routes
+only `/api/*`, `/images/*`, and `/healthz` to the serverless function. Everything
+else falls back to `index.html` for client-side routing.
 
 Your admin user already exists in Neon, so the same login works in production.
-You do not need to set `ADMIN_PASSWORD` on Vercel.
-
-## Changing your admin password
-
-Set `ADMIN_PASSWORD` in `.env` to the new value and re-run:
-
-```bash
-npm run setup
-```
-
-It updates the existing user's hash in place.
+`ADMIN_PASSWORD` is not needed on Vercel.
 
 ## Troubleshooting a deploy
 
-Visit `/healthz` on the deployed URL. It reports config and database status
-without exposing any values:
+Visit `/healthz`. It reports config and database status without exposing values:
 
 ```json
-{ "ok": true, "missingEnv": [], "viewsDir": true, "database": "reachable" }
+{ "ok": true, "missingEnv": [], "clientBuilt": true, "database": "reachable" }
 ```
 
-- **`missingEnv` is non-empty** → add those variables in Vercel → Settings →
-  Environment Variables, then redeploy. The site serves a 503 page naming them
-  until you do.
+- **`missingEnv` non-empty** → add those variables in Vercel, then redeploy. The
+  site serves a 503 page naming them until you do.
 - **`database: "unreachable"`** → `DATABASE_URL` is set but wrong, or the Neon
   password was rotated without updating it.
-- **`viewsDir: false`** → the EJS templates were not bundled; check the
-  `includeFiles` block in `vercel.json`.
-
-`/healthz` never renders a template and never touches the database unless the
-config is complete, so it answers even when everything else is broken. If
-`/healthz` responds but other pages don't, the problem is templates or data —
-not the function itself.
+- **`clientBuilt: false`** → the Vite build did not run or did not land where the
+  server expects.
 
 ### Why a crash page instead of an error page
 
 Express treats an exception thrown *inside* an error handler as unhandled, which
 kills the whole serverless function and produces Vercel's
-`FUNCTION_INVOCATION_FAILED` with no detail. So the 404 handler, the error
-handler, and the config guard all render plain HTML from `server/fallback.js`
-rather than EJS — they must survive `views/` being absent, since that is one of
-the conditions they exist to report.
+`FUNCTION_INVOCATION_FAILED` with no detail. So the error handler and config guard
+serve plain HTML from `server/fallback.js` and never depend on the React bundle —
+they must survive the very conditions they exist to report. For the same reason
+`db.js` builds its client lazily instead of throwing at module load.
+
+## SEO note
+
+This is a client-rendered SPA, so crawlers and social link previews that don't run
+JavaScript see an empty shell. Google executes JS and will index it, but previews
+on some platforms won't show post titles. The `ejs-version` branch holds the
+earlier server-rendered implementation if you want to compare or revert.
+
+## Changing your admin password
+
+Set `ADMIN_PASSWORD` in `.env` and re-run:
+
+```bash
+npm run setup
+```
 
 ## Useful commands
 

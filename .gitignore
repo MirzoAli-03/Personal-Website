@@ -6,6 +6,10 @@
 # Dependencies
 node_modules/
 
+# Build output
+client/dist/
+.vercel/
+
 # Uploads (user content, not source)
 assets/uploads/
 
