@@ -18,17 +18,18 @@ import LightModeIcon from "@mui/icons-material/LightModeOutlined";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 
 import { useApp } from "../context/AppContext";
+import LanguageSwitcher from "./LanguageSwitcher";
 
 const SECTIONS = [
-  { label: "Dashboard", to: "/admin" },
-  { label: "Posts", to: "/admin/posts" },
-  { label: "Projects", to: "/admin/projects" },
-  { label: "Images", to: "/admin/images" },
-  { label: "Settings", to: "/admin/settings" },
+  { key: "admin.dashboard", to: "/admin" },
+  { key: "admin.posts", to: "/admin/posts" },
+  { key: "admin.projects", to: "/admin/projects" },
+  { key: "admin.images", to: "/admin/images" },
+  { key: "admin.settings", to: "/admin/settings" },
 ];
 
 export default function AdminLayout() {
-  const { mode, toggleMode, logout } = useApp();
+  const { mode, toggleMode, logout, t } = useApp();
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const theme = useTheme();
@@ -62,17 +63,18 @@ export default function AdminLayout() {
               size="small"
               endIcon={<OpenInNewIcon fontSize="small" />}
             >
-              View site
+              {t("admin.viewSite")}
             </Button>
 
             <Box sx={{ flexGrow: 1 }} />
 
             <Stack direction="row" spacing={1} alignItems="center">
-              <IconButton onClick={toggleMode} aria-label="Toggle theme">
+              <LanguageSwitcher size="small" />
+              <IconButton onClick={toggleMode} aria-label={t("nav.toggleTheme")}>
                 {mode === "dark" ? <LightModeIcon /> : <DarkModeIcon />}
               </IconButton>
               <Button variant="outlined" size="small" onClick={handleLogout}>
-                Sign out
+                {t("admin.signOut")}
               </Button>
             </Stack>
           </Toolbar>
@@ -84,7 +86,7 @@ export default function AdminLayout() {
             allowScrollButtonsMobile
           >
             {SECTIONS.map((s) => (
-              <Tab key={s.to} label={s.label} value={s.to} component={RouterLink} to={s.to} />
+              <Tab key={s.to} label={t(s.key)} value={s.to} component={RouterLink} to={s.to} />
             ))}
           </Tabs>
         </Container>

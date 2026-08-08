@@ -18,12 +18,14 @@ import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 
 import { api, uploadImageFile } from "../../api";
 import { useAsync } from "../../hooks/useAsync";
+import { useApp } from "../../context/AppContext";
 import { Loading, ErrorState, Empty } from "../../components/PageState";
 import ConfirmDialog from "../../components/ConfirmDialog";
 import { useDocumentTitle } from "../../hooks/useDocumentTitle";
 
 export default function Images() {
-  useDocumentTitle("Images — Admin");
+  const { t } = useApp();
+  useDocumentTitle(`${t("images.title")} — Admin`);
 
   const { data: images, loading, error, reload, setData } = useAsync(() => api.listImages(), []);
   const [status, setStatus] = useState(null);
@@ -37,13 +39,13 @@ export default function Images() {
 
     try {
       for (let i = 0; i < files.length; i += 1) {
-        setStatus({ severity: "info", text: `Uploading ${i + 1} of ${files.length}…` });
+        setStatus({ severity: "info", text: t("images.uploading", { i: i + 1, total: files.length }) });
         await uploadImageFile(files[i]);
       }
-      setStatus({ severity: "success", text: `Uploaded ${files.length} image(s).` });
+      setStatus({ severity: "success", text: t("images.uploaded", { n: files.length }) });
       await reload().then(setData);
     } catch (err) {
-      setStatus({ severity: "error", text: `Upload failed: ${err.message}` });
+      setStatus({ severity: "error", text: t("images.failed", { message: err.message }) });
     }
   }
 
@@ -71,16 +73,15 @@ export default function Images() {
   return (
     <>
       <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }} flexWrap="wrap" useFlexGap>
-        <Typography variant="h4">Images</Typography>
+        <Typography variant="h4">{t("images.title")}</Typography>
         <Button variant="contained" component="label">
-          Upload images
+          {t("images.upload")}
           <input type="file" accept="image/*" hidden multiple onChange={handleUpload} />
         </Button>
       </Stack>
 
       <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-        Images are downscaled to 1600px and converted to WebP in your browser before
-        upload, then stored in Postgres. Server limit is 4 MB per file.
+        {t("images.note")}
       </Typography>
 
       {status && (
@@ -91,7 +92,7 @@ export default function Images() {
 
       {loading && <Loading />}
       {error && <ErrorState error={error} />}
-      {images?.length === 0 && <Empty>No images yet.</Empty>}
+      {images?.length === 0 && <Empty>{t("images.empty")}</Empty>}
 
       <Grid container spacing={2}>
         {images?.map((img) => (
@@ -115,17 +116,17 @@ export default function Images() {
                 </Typography>
                 <Stack direction="row" spacing={0.5} alignItems="center">
                   <TextField
-                    value={copied === `/images/${img.id}` ? "Copied!" : `/images/${img.id}`}
+                    value={copied === `/images/${img.id}` ? t("images.copied") : `/images/${img.id}`}
                     size="small"
                     fullWidth
                     InputProps={{ readOnly: true, sx: { fontSize: "0.75rem" } }}
                   />
-                  <Tooltip title="Copy URL">
+                  <Tooltip title={t("images.copyUrl")}>
                     <IconButton size="small" onClick={() => copyUrl(`/images/${img.id}`)}>
                       <ContentCopyIcon fontSize="small" />
                     </IconButton>
                   </Tooltip>
-                  <Tooltip title="Delete">
+                  <Tooltip title={t("common.delete")}>
                     <IconButton size="small" color="error" onClick={() => setPending(img)}>
                       <DeleteIcon fontSize="small" />
                     </IconButton>
@@ -139,8 +140,8 @@ export default function Images() {
 
       <ConfirmDialog
         open={Boolean(pending)}
-        title="Delete image?"
-        message="Posts and projects using this image will lose their cover."
+        title={t("images.deleteTitle")}
+        message={t("images.deleteBody")}
         onConfirm={confirmDelete}
         onClose={() => setPending(null)}
       />

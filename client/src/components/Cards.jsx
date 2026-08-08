@@ -10,14 +10,7 @@ import {
   Box,
 } from "@mui/material";
 
-export function formatDate(value) {
-  if (!value) return "";
-  return new Date(value).toLocaleDateString("en-US", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  });
-}
+import { useApp } from "../context/AppContext";
 
 const hoverSx = {
   height: "100%",
@@ -51,6 +44,7 @@ function Thumb({ imageId, alt }) {
 }
 
 export function PostCard({ post }) {
+  const { formatDate } = useApp();
   return (
     <Card variant="outlined" sx={hoverSx}>
       <CardActionArea
@@ -79,6 +73,7 @@ export function PostCard({ post }) {
 }
 
 export function ProjectCard({ project }) {
+  const { t } = useApp();
   const linkProps = project.url
     ? { component: "a", href: project.url, target: "_blank", rel: "noopener" }
     : { component: RouterLink, to: "/projects" };
@@ -112,7 +107,7 @@ export function ProjectCard({ project }) {
             </Typography>
             {project.url && (
               <Typography variant="caption" color="primary" fontWeight={700}>
-                {project.link_label || "View"} →
+                {project.link_label || t("common.view")} →
               </Typography>
             )}
           </Stack>

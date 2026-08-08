@@ -15,9 +15,9 @@ import { useApp } from "../../context/AppContext";
 import { useDocumentTitle } from "../../hooks/useDocumentTitle";
 
 export default function Login() {
-  useDocumentTitle("Sign in — Admin");
+  const { login, user, t } = useApp();
+  useDocumentTitle(`${t("login.title")} — Admin`);
 
-  const { login, user } = useApp();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -48,10 +48,10 @@ export default function Login() {
     <Box sx={{ display: "grid", placeItems: "center", minHeight: "100vh", p: 3 }}>
       <Paper variant="outlined" sx={{ p: 4, width: "100%", maxWidth: 400 }}>
         <Typography variant="h5" gutterBottom>
-          Sign in
+          {t("login.title")}
         </Typography>
         <Typography color="text.secondary" variant="body2" sx={{ mb: 3 }}>
-          Admin access to your site.
+          {t("login.subtitle")}
         </Typography>
 
         {error && (
@@ -63,7 +63,7 @@ export default function Login() {
         <form onSubmit={handleSubmit}>
           <Stack spacing={2}>
             <TextField
-              label="Username"
+              label={t("login.username")}
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               autoComplete="username"
@@ -72,7 +72,7 @@ export default function Login() {
               fullWidth
             />
             <TextField
-              label="Password"
+              label={t("login.password")}
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -81,14 +81,14 @@ export default function Login() {
               fullWidth
             />
             <Button type="submit" variant="contained" size="large" disabled={busy} fullWidth>
-              {busy ? "Signing in…" : "Sign in"}
+              {busy ? t("login.submitting") : t("login.submit")}
             </Button>
           </Stack>
         </form>
 
         <Typography variant="body2" align="center" sx={{ mt: 3 }}>
           <Link component={RouterLink} to="/" color="text.secondary" underline="hover">
-            ← Back to site
+            ← {t("common.backToSite")}
           </Link>
         </Typography>
       </Paper>

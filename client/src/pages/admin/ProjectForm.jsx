@@ -16,6 +16,7 @@ import {
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 import { api } from "../../api";
+import { useApp } from "../../context/AppContext";
 import ImagePicker from "../../components/ImagePicker";
 import ConfirmDialog from "../../components/ConfirmDialog";
 import { Loading, ErrorState } from "../../components/PageState";
@@ -37,7 +38,10 @@ export default function ProjectForm() {
   const { id } = useParams();
   const isEdit = Boolean(id);
   const navigate = useNavigate();
-  useDocumentTitle(isEdit ? "Edit project — Admin" : "New project — Admin");
+  const { t } = useApp();
+  useDocumentTitle(
+    `${isEdit ? t("projectForm.editTitle") : t("projectForm.newTitle")} — Admin`
+  );
 
   const [form, setForm] = useState(EMPTY);
   const [images, setImages] = useState([]);
@@ -113,9 +117,11 @@ export default function ProjectForm() {
   return (
     <Box component="form" onSubmit={handleSubmit} sx={{ maxWidth: 760 }}>
       <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 3 }} flexWrap="wrap" useFlexGap>
-        <Typography variant="h4">{isEdit ? "Edit project" : "New project"}</Typography>
+        <Typography variant="h4">
+          {isEdit ? t("projectForm.editTitle") : t("projectForm.newTitle")}
+        </Typography>
         <Button component={RouterLink} to="/admin/projects" startIcon={<ArrowBackIcon />}>
-          All projects
+          {t("projectForm.allProjects")}
         </Button>
       </Stack>
 
@@ -123,9 +129,9 @@ export default function ProjectForm() {
 
       <Paper variant="outlined" sx={{ p: 3 }}>
         <Stack spacing={2.5}>
-          <TextField label="Title" value={form.title} onChange={set("title")} required fullWidth size="medium" />
+          <TextField label={t("projectForm.title")} value={form.title} onChange={set("title")} required fullWidth size="medium" />
           <TextField
-            label="Description"
+            label={t("projectForm.description")}
             value={form.description}
             onChange={set("description")}
             multiline
@@ -136,42 +142,42 @@ export default function ProjectForm() {
           <Grid container spacing={2}>
             <Grid item xs={12} sm={8}>
               <TextField
-                label="Tags"
+                label={t("projectForm.tags")}
                 value={form.tags}
                 onChange={set("tags")}
                 fullWidth
                 placeholder="React, Node.js"
-                helperText="Comma separated"
+                helperText={t("projectForm.tagsHelp")}
               />
             </Grid>
             <Grid item xs={12} sm={4}>
-              <TextField label="Year" value={form.year} onChange={set("year")} fullWidth placeholder="2026" />
+              <TextField label={t("projectForm.year")} value={form.year} onChange={set("year")} fullWidth placeholder="2026" />
             </Grid>
             <Grid item xs={12} sm={8}>
-              <TextField label="Link URL" type="url" value={form.url} onChange={set("url")} fullWidth placeholder="https://…" />
+              <TextField label={t("projectForm.url")} type="url" value={form.url} onChange={set("url")} fullWidth placeholder="https://…" />
             </Grid>
             <Grid item xs={12} sm={4}>
-              <TextField label="Link label" value={form.link_label} onChange={set("link_label")} fullWidth />
+              <TextField label={t("projectForm.linkLabel")} value={form.link_label} onChange={set("link_label")} fullWidth />
             </Grid>
             <Grid item xs={12} sm={4}>
               <TextField
-                label="Sort order"
+                label={t("projectForm.sortOrder")}
                 type="number"
                 value={form.sort_order}
                 onChange={set("sort_order")}
                 fullWidth
-                helperText="Lower appears first"
+                helperText={t("projectForm.sortHelp")}
               />
             </Grid>
             <Grid item xs={12} sm={8}>
               <TextField
                 select
-                label="Cover image"
+                label={t("projectForm.cover")}
                 value={form.cover_image_id}
                 onChange={set("cover_image_id")}
                 fullWidth
               >
-                <MenuItem value="">None</MenuItem>
+                <MenuItem value="">{t("common.none")}</MenuItem>
                 {images.map((img) => (
                   <MenuItem key={img.id} value={img.id}>
                     {img.filename}
@@ -179,7 +185,7 @@ export default function ProjectForm() {
                 ))}
               </TextField>
               <Button size="small" sx={{ mt: 1 }} onClick={() => setPickerOpen(true)}>
-                Browse or upload →
+                {t("postForm.browse")} →
               </Button>
             </Grid>
           </Grid>
@@ -200,19 +206,19 @@ export default function ProjectForm() {
                 onChange={(e) => setForm((prev) => ({ ...prev, featured: e.target.checked }))}
               />
             }
-            label="Show on the home page"
+            label={t("projectForm.featured")}
           />
 
           <Stack direction="row" spacing={2} flexWrap="wrap" useFlexGap>
             <Button type="submit" variant="contained" disabled={busy}>
-              {busy ? "Saving…" : "Save project"}
+              {busy ? t("common.saving") : t("projectForm.save")}
             </Button>
             <Button component={RouterLink} to="/admin/projects" variant="outlined">
-              Cancel
+              {t("common.cancel")}
             </Button>
             {isEdit && (
               <Button color="error" onClick={() => setConfirmOpen(true)}>
-                Delete
+                {t("common.delete")}
               </Button>
             )}
           </Stack>
@@ -232,8 +238,8 @@ export default function ProjectForm() {
 
       <ConfirmDialog
         open={confirmOpen}
-        title="Delete project?"
-        message="This project will be permanently deleted."
+        title={t("projectsAdmin.deleteTitle")}
+        message={t("projectForm.deleteBody")}
         onConfirm={handleDelete}
         onClose={() => setConfirmOpen(false)}
       />

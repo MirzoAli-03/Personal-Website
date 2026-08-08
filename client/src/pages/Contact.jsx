@@ -5,20 +5,21 @@ import { useApp } from "../context/AppContext";
 import { useDocumentTitle } from "../hooks/useDocumentTitle";
 
 export default function Contact() {
-  const { settings } = useApp();
-  useDocumentTitle(settings ? `Contact — ${settings.full_name}` : "Contact");
+  const { settings, t } = useApp();
+  useDocumentTitle(
+    settings ? `${t("contact.eyebrow")} — ${settings.full_name}` : t("contact.eyebrow")
+  );
 
   return (
     <Container maxWidth="lg" sx={{ pt: { xs: 6, md: 10 }, pb: 8 }}>
       <Typography variant="overline" color="primary" fontWeight={700}>
-        Contact
+        {t("contact.eyebrow")}
       </Typography>
       <Typography variant="h1" sx={{ fontSize: { xs: "2rem", md: "2.8rem" }, mb: 2 }}>
-        Get in touch
+        {t("contact.title")}
       </Typography>
       <Typography color="text.secondary" sx={{ maxWidth: "56ch", mb: 4 }}>
-        The fastest way to reach me is email. I read everything and usually reply
-        within a couple of days.
+        {t("contact.body")}
       </Typography>
 
       <Stack direction="row" spacing={2} flexWrap="wrap" useFlexGap>

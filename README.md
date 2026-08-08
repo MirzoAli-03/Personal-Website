@@ -98,6 +98,31 @@ The editor uses `contenteditable` with `document.execCommand`. It is deprecated 
 universally supported and dependency-free; swap in TipTap if you ever need tables,
 collaborative editing, or a real undo stack.
 
+## Languages
+
+The interface ships in English, Russian, and Tajik. A switcher sits in the nav on
+both the public site and the admin panel; the choice is saved to `localStorage`,
+and a first-time visitor gets whichever of the three their browser prefers.
+
+**Interface only.** Your posts, projects, and settings text stay exactly as you
+wrote them — switching language changes the chrome around your content, not the
+content. Writing a post in three languages would mean writing it three times, so
+that was deliberately left out.
+
+Translations live in `client/src/i18n/{en,ru,tg}.js` as flat key/value files.
+English is the fallback: a key missing from another locale renders the English
+string rather than breaking.
+
+```bash
+npm --prefix client run i18n:check
+```
+
+That verifies all three locales define the same keys and prints the Russian
+plural forms, which have three cases (`1 черновик`, `2 черновика`, `5 черновиков`).
+
+> The Tajik strings were machine-authored and are worth a read-through by a
+> native speaker — particularly the admin-panel wording.
+
 ## Environment variables
 
 | Variable | Purpose |

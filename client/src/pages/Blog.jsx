@@ -8,26 +8,28 @@ import { Loading, ErrorState, Empty } from "../components/PageState";
 import { useDocumentTitle } from "../hooks/useDocumentTitle";
 
 export default function Blog() {
-  const { settings } = useApp();
-  useDocumentTitle(settings ? `Blog — ${settings.full_name}` : "Blog");
+  const { settings, t } = useApp();
+  useDocumentTitle(
+    settings ? `${t("blog.title")} — ${settings.full_name}` : t("blog.title")
+  );
 
   const { data: posts, loading, error } = useAsync(() => api.getPosts(), []);
 
   return (
     <Container maxWidth="lg" sx={{ pt: { xs: 6, md: 10 }, pb: 6 }}>
       <Typography variant="overline" color="primary" fontWeight={700}>
-        Writing
+        {t("blog.eyebrow")}
       </Typography>
       <Typography variant="h1" sx={{ fontSize: { xs: "2rem", md: "2.8rem" }, mb: 1 }}>
-        Blog
+        {t("blog.title")}
       </Typography>
       <Typography color="text.secondary" sx={{ mb: 5, maxWidth: "56ch" }}>
-        Notes on what I'm building, reading, and figuring out.
+        {t("blog.subtitle")}
       </Typography>
 
       {loading && <Loading />}
       {error && <ErrorState error={error} />}
-      {posts?.length === 0 && <Empty>No posts published yet.</Empty>}
+      {posts?.length === 0 && <Empty>{t("blog.empty")}</Empty>}
 
       <Grid container spacing={3}>
         {posts?.map((post) => (

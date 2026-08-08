@@ -1,4 +1,5 @@
 import { Box, CircularProgress, Alert, Typography } from "@mui/material";
+import { useApp } from "../context/AppContext";
 
 export function Loading({ minHeight = 200 }) {
   return (
@@ -9,9 +10,10 @@ export function Loading({ minHeight = 200 }) {
 }
 
 export function ErrorState({ error }) {
+  const { t } = useApp();
   return (
     <Alert severity="error" sx={{ my: 2 }}>
-      {error?.message || "Something went wrong."}
+      {error?.message || t("common.error")}
     </Alert>
   );
 }

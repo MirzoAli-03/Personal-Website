@@ -20,13 +20,14 @@ import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 
 import { api } from "../../api";
 import { useAsync } from "../../hooks/useAsync";
+import { useApp } from "../../context/AppContext";
 import { Loading, ErrorState, Empty } from "../../components/PageState";
-import { formatDate } from "../../components/Cards";
 import ConfirmDialog from "../../components/ConfirmDialog";
 import { useDocumentTitle } from "../../hooks/useDocumentTitle";
 
 export default function AdminPosts() {
-  useDocumentTitle("Posts — Admin");
+  const { t, formatDate } = useApp();
+  useDocumentTitle(`${t("posts.title")} — Admin`);
 
   const { data: posts, loading, error, reload, setData } = useAsync(() => api.listAllPosts(), []);
   const [pending, setPending] = useState(null);
@@ -46,9 +47,9 @@ export default function AdminPosts() {
   return (
     <>
       <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 3 }} flexWrap="wrap" useFlexGap>
-        <Typography variant="h4">Posts</Typography>
+        <Typography variant="h4">{t("posts.title")}</Typography>
         <Button component={RouterLink} to="/admin/posts/new" variant="contained">
-          Write a post
+          {t("posts.write")}
         </Button>
       </Stack>
 
@@ -58,16 +59,16 @@ export default function AdminPosts() {
       {posts && (
         <Paper variant="outlined" sx={{ overflowX: "auto" }}>
           {posts.length === 0 ? (
-            <Empty>No posts yet.</Empty>
+            <Empty>{t("posts.empty")}</Empty>
           ) : (
             <Table size="small">
               <TableHead>
                 <TableRow>
-                  <TableCell>Title</TableCell>
-                  <TableCell>Tag</TableCell>
-                  <TableCell>Status</TableCell>
-                  <TableCell>Date</TableCell>
-                  <TableCell align="right">Actions</TableCell>
+                  <TableCell>{t("posts.colTitle")}</TableCell>
+                  <TableCell>{t("posts.colTag")}</TableCell>
+                  <TableCell>{t("posts.colStatus")}</TableCell>
+                  <TableCell>{t("posts.colDate")}</TableCell>
+                  <TableCell align="right">{t("common.actions")}</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -88,7 +89,7 @@ export default function AdminPosts() {
                     <TableCell>
                       <Chip
                         size="small"
-                        label={post.published ? "Published" : "Draft"}
+                        label={post.published ? t("posts.published") : t("posts.draft")}
                         color={post.published ? "success" : "warning"}
                         variant="outlined"
                       />
@@ -98,7 +99,7 @@ export default function AdminPosts() {
                     </TableCell>
                     <TableCell align="right" sx={{ whiteSpace: "nowrap" }}>
                       {post.published && (
-                        <Tooltip title="View live">
+                        <Tooltip title={t("posts.viewLive")}>
                           <IconButton
                             size="small"
                             component="a"
@@ -110,12 +111,12 @@ export default function AdminPosts() {
                           </IconButton>
                         </Tooltip>
                       )}
-                      <Tooltip title="Edit">
+                      <Tooltip title={t("common.edit")}>
                         <IconButton size="small" component={RouterLink} to={`/admin/posts/${post.id}/edit`}>
                           <EditIcon fontSize="small" />
                         </IconButton>
                       </Tooltip>
-                      <Tooltip title="Delete">
+                      <Tooltip title={t("common.delete")}>
                         <IconButton size="small" color="error" onClick={() => setPending(post)}>
                           <DeleteIcon fontSize="small" />
                         </IconButton>
@@ -131,8 +132,8 @@ export default function AdminPosts() {
 
       <ConfirmDialog
         open={Boolean(pending)}
-        title="Delete post?"
-        message={`"${pending?.title}" will be permanently deleted. This cannot be undone.`}
+        title={t("posts.deleteTitle")}
+        message={t("posts.deleteBody", { title: pending?.title })}
         onConfirm={confirmDelete}
         onClose={() => setPending(null)}
       />

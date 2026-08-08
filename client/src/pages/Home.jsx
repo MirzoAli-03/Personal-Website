@@ -18,7 +18,7 @@ import { Loading } from "../components/PageState";
 import { useDocumentTitle } from "../hooks/useDocumentTitle";
 
 export default function Home() {
-  const { settings } = useApp();
+  const { settings, t } = useApp();
   useDocumentTitle(settings?.full_name);
 
   const { data, loading } = useAsync(
@@ -72,10 +72,10 @@ export default function Home() {
             )}
             <Stack direction="row" spacing={2} flexWrap="wrap" useFlexGap>
               <Button component={RouterLink} to="/projects" variant="contained" size="large">
-                View my work
+                {t("home.viewWork")}
               </Button>
               <Button component={RouterLink} to="/contact" variant="outlined" size="large">
-                Get in touch
+                {t("home.getInTouch")}
               </Button>
             </Stack>
           </Box>
@@ -102,7 +102,7 @@ export default function Home() {
       {(settings?.bio || settings?.skills?.length > 0) && (
         <Container maxWidth="lg" sx={{ py: 6 }}>
           <Typography variant="h2" sx={{ fontSize: "1.7rem", mb: 3 }}>
-            About me
+            {t("home.about")}
           </Typography>
           {settings.bio && (
             <Typography color="text.secondary" sx={{ maxWidth: "60ch", mb: 3 }}>
@@ -123,10 +123,10 @@ export default function Home() {
         <Container maxWidth="lg" sx={{ py: 6 }}>
           <Stack direction="row" justifyContent="space-between" alignItems="baseline" sx={{ mb: 3 }}>
             <Typography variant="h2" sx={{ fontSize: "1.7rem" }}>
-              Featured projects
+              {t("home.featured")}
             </Typography>
             <Button component={RouterLink} to="/projects" size="small">
-              See all →
+              {t("common.seeAll")} →
             </Button>
           </Stack>
           <Grid container spacing={3}>
@@ -143,10 +143,10 @@ export default function Home() {
         <Container maxWidth="lg" sx={{ py: 6 }}>
           <Stack direction="row" justifyContent="space-between" alignItems="baseline" sx={{ mb: 3 }}>
             <Typography variant="h2" sx={{ fontSize: "1.7rem" }}>
-              Latest posts
+              {t("home.latest")}
             </Typography>
             <Button component={RouterLink} to="/blog" size="small">
-              See all →
+              {t("common.seeAll")} →
             </Button>
           </Stack>
           <Grid container spacing={3}>
@@ -165,14 +165,14 @@ export default function Home() {
           sx={{ p: { xs: 4, md: 6 }, textAlign: "center", bgcolor: "action.hover" }}
         >
           <Typography variant="h2" sx={{ fontSize: "1.6rem", mb: 1 }}>
-            Let's work together
+            {t("home.ctaTitle")}
           </Typography>
           <Typography color="text.secondary" sx={{ mb: 3 }}>
-            Have a project in mind or just want to say hi? My inbox is always open.
+            {t("home.ctaBody")}
           </Typography>
           <Stack direction="row" spacing={2} justifyContent="center" flexWrap="wrap" useFlexGap>
             <Button component={RouterLink} to="/contact" variant="contained">
-              Contact me
+              {t("home.contactMe")}
             </Button>
             {settings?.email && (
               <Button variant="outlined" href={`mailto:${settings.email}`}>

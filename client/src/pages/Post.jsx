@@ -4,8 +4,8 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 
 import { api } from "../api";
 import { useAsync } from "../hooks/useAsync";
-import { Loading, ErrorState } from "../components/PageState";
-import { formatDate } from "../components/Cards";
+import { useApp } from "../context/AppContext";
+import { Loading } from "../components/PageState";
 import { useDocumentTitle } from "../hooks/useDocumentTitle";
 
 function readingTime(html) {
@@ -18,6 +18,7 @@ function readingTime(html) {
 
 export default function Post() {
   const { slug } = useParams();
+  const { t, formatDate } = useApp();
   const { data: post, loading, error } = useAsync(() => api.getPost(slug), [slug]);
 
   useDocumentTitle(post?.title, post?.excerpt);
@@ -27,10 +28,10 @@ export default function Post() {
     return (
       <Container maxWidth="md" sx={{ py: 10 }}>
         <Typography variant="h1" sx={{ fontSize: "2rem", mb: 2 }}>
-          {error.status === 404 ? "Post not found" : "Something went wrong"}
+          {error.status === 404 ? t("post.notFound") : t("common.error")}
         </Typography>
         <Button component={RouterLink} to="/blog" startIcon={<ArrowBackIcon />}>
-          Back to blog
+          {t("post.back")}
         </Button>
       </Container>
     );
@@ -39,11 +40,11 @@ export default function Post() {
   return (
     <Container maxWidth="md" sx={{ pt: { xs: 5, md: 8 }, pb: 8 }}>
       <Button component={RouterLink} to="/blog" startIcon={<ArrowBackIcon />} sx={{ mb: 3 }}>
-        Back to blog
+        {t("post.back")}
       </Button>
 
       <Typography variant="body2" color="text.secondary" gutterBottom>
-        {formatDate(post.published_at)} · {readingTime(post.body)} min read
+        {formatDate(post.published_at)} · {t("post.minRead", { n: readingTime(post.body) })}
         {post.tag ? ` · ${post.tag}` : ""}
       </Typography>
 

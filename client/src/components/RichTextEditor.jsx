@@ -10,10 +10,13 @@ import LinkIcon from "@mui/icons-material/Link";
 import ImageIcon from "@mui/icons-material/Image";
 import HtmlIcon from "@mui/icons-material/DataObject";
 
+import { useApp } from "../context/AppContext";
+
 // contenteditable + execCommand. Deprecated but universally supported, and it
 // keeps the editor dependency-free. Swap for TipTap if this ever needs tables,
 // collaborative editing, or a proper undo stack.
 export default function RichTextEditor({ value, onChange, onRequestImage, editorApiRef }) {
+  const { t } = useApp();
   const editorRef = useRef(null);
   const [htmlMode, setHtmlMode] = useState(false);
   const [source, setSource] = useState(value || "");
@@ -50,7 +53,7 @@ export default function RichTextEditor({ value, onChange, onRequestImage, editor
   }
 
   function insertLink() {
-    const url = window.prompt("Link URL", "https://");
+    const url = window.prompt(t("editor.linkPrompt"), "https://");
     if (url) exec("createLink", url);
   }
 
@@ -68,19 +71,19 @@ export default function RichTextEditor({ value, onChange, onRequestImage, editor
   }, [editorApiRef]);
 
   const buttons = [
-    { title: "Bold", icon: <FormatBoldIcon fontSize="small" />, run: () => exec("bold") },
-    { title: "Italic", icon: <FormatItalicIcon fontSize="small" />, run: () => exec("italic") },
-    { title: "Heading", label: "H2", run: () => exec("formatBlock", "h2") },
-    { title: "Subheading", label: "H3", run: () => exec("formatBlock", "h3") },
-    { title: "Paragraph", label: "¶", run: () => exec("formatBlock", "p") },
+    { title: t("editor.bold"), icon: <FormatBoldIcon fontSize="small" />, run: () => exec("bold") },
+    { title: t("editor.italic"), icon: <FormatItalicIcon fontSize="small" />, run: () => exec("italic") },
+    { title: t("editor.heading"), label: "H2", run: () => exec("formatBlock", "h2") },
+    { title: t("editor.subheading"), label: "H3", run: () => exec("formatBlock", "h3") },
+    { title: t("editor.paragraph"), label: "¶", run: () => exec("formatBlock", "p") },
     { divider: true },
-    { title: "Bullet list", icon: <FormatListBulletedIcon fontSize="small" />, run: () => exec("insertUnorderedList") },
-    { title: "Numbered list", icon: <FormatListNumberedIcon fontSize="small" />, run: () => exec("insertOrderedList") },
-    { title: "Quote", icon: <FormatQuoteIcon fontSize="small" />, run: () => exec("formatBlock", "blockquote") },
-    { title: "Code block", icon: <CodeIcon fontSize="small" />, run: () => exec("formatBlock", "pre") },
+    { title: t("editor.bulletList"), icon: <FormatListBulletedIcon fontSize="small" />, run: () => exec("insertUnorderedList") },
+    { title: t("editor.numberedList"), icon: <FormatListNumberedIcon fontSize="small" />, run: () => exec("insertOrderedList") },
+    { title: t("editor.quote"), icon: <FormatQuoteIcon fontSize="small" />, run: () => exec("formatBlock", "blockquote") },
+    { title: t("editor.codeBlock"), icon: <CodeIcon fontSize="small" />, run: () => exec("formatBlock", "pre") },
     { divider: true },
-    { title: "Insert link", icon: <LinkIcon fontSize="small" />, run: insertLink },
-    { title: "Insert image", icon: <ImageIcon fontSize="small" />, run: () => onRequestImage?.() },
+    { title: t("editor.insertLink"), icon: <LinkIcon fontSize="small" />, run: insertLink },
+    { title: t("editor.insertImage"), icon: <ImageIcon fontSize="small" />, run: () => onRequestImage?.() },
   ];
 
   return (
@@ -121,7 +124,7 @@ export default function RichTextEditor({ value, onChange, onRequestImage, editor
           )
         )}
         <Divider orientation="vertical" flexItem sx={{ mx: 0.5 }} />
-        <Tooltip title="Edit raw HTML">
+        <Tooltip title={t("editor.rawHtml")}>
           <ToggleButton
             value="html"
             size="small"

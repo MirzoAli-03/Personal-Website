@@ -20,7 +20,6 @@ import { api } from "../../api";
 import { useAsync } from "../../hooks/useAsync";
 import { useApp } from "../../context/AppContext";
 import { Loading, ErrorState, Empty } from "../../components/PageState";
-import { formatDate } from "../../components/Cards";
 import { useDocumentTitle } from "../../hooks/useDocumentTitle";
 
 function Stat({ value, label, sub, to }) {
@@ -42,8 +41,8 @@ function Stat({ value, label, sub, to }) {
 }
 
 export default function Dashboard() {
-  useDocumentTitle("Dashboard — Admin");
-  const { user, settings } = useApp();
+  const { user, settings, t, formatDate } = useApp();
+  useDocumentTitle(`${t("admin.dashboard")} — Admin`);
 
   const { data, loading, error } = useAsync(async () => {
     const [posts, projects, images] = await Promise.all([
@@ -63,63 +62,68 @@ export default function Dashboard() {
   return (
     <>
       <Typography variant="h4" gutterBottom>
-        Welcome back, {user?.username}
+        {t("dash.welcome", { name: user?.username })}
       </Typography>
 
       <Grid container spacing={2} sx={{ mb: 4, mt: 1 }}>
         <Grid item xs={6} md={3}>
           <Stat
             value={posts.filter((p) => p.published).length}
-            label="Published posts"
-            sub={`${posts.filter((p) => !p.published).length} draft(s)`}
+            label={t("dash.publishedPosts")}
+            sub={t("dash.drafts", { n: posts.filter((p) => !p.published).length })}
             to="/admin/posts"
           />
         </Grid>
         <Grid item xs={6} md={3}>
           <Stat
             value={projects.length}
-            label="Projects"
-            sub={`${projects.filter((p) => p.featured).length} featured`}
+            label={t("admin.projects")}
+            sub={t("dash.featured", { n: projects.filter((p) => p.featured).length })}
             to="/admin/projects"
           />
         </Grid>
         <Grid item xs={6} md={3}>
-          <Stat value={images.length} label="Images" sub={`${storedMb} MB stored`} to="/admin/images" />
+          <Stat
+            value={images.length}
+            label={t("admin.images")}
+            sub={t("dash.stored", { n: storedMb })}
+            to="/admin/images"
+          />
         </Grid>
         <Grid item xs={6} md={3}>
-          <Stat value="⚙" label="Site settings" sub={settings?.full_name} to="/admin/settings" />
+          <Stat value="⚙" label={t("dash.siteSettings")} sub={settings?.full_name} to="/admin/settings" />
         </Grid>
       </Grid>
 
       <Stack direction="row" spacing={2} sx={{ mb: 4 }} flexWrap="wrap" useFlexGap>
         <Button component={RouterLink} to="/admin/posts/new" variant="contained">
-          Write a post
+          {t("dash.writePost")}
         </Button>
         <Button component={RouterLink} to="/admin/projects/new" variant="outlined">
-          Add a project
+          {t("dash.addProject")}
         </Button>
         <Button component={RouterLink} to="/admin/images" variant="outlined">
-          Upload images
+          {t("dash.uploadImages")}
         </Button>
       </Stack>
 
       <Paper variant="outlined" sx={{ p: 3 }}>
         <Stack direction="row" justifyContent="space-between" alignItems="baseline" sx={{ mb: 2 }}>
-          <Typography variant="h6">Recent posts</Typography>
+          <Typography variant="h6">{t("dash.recentPosts")}</Typography>
           <Button component={RouterLink} to="/admin/posts" size="small">
-            All posts →
+            {t("dash.allPosts")} →
           </Button>
         </Stack>
 
         {posts.length === 0 ? (
-          <Empty>No posts yet.</Empty>
+          <Empty>{t("dash.noPosts")}</Empty>
         ) : (
           <Table size="small">
             <TableHead>
               <TableRow>
-                <TableCell>Title</TableCell>
-                <TableCell>Status</TableCell>
-                <TableCell>Date</TableCell>
+                <TableCell>{t("posts.colTitle")}</TableCell>
+                <TableCell>{t("posts.colStatus")}</TableCell>
+                <TableCell>{t("posts.colDate")}</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -136,7 +140,7 @@ export default function Dashboard() {
                   <TableCell>
                     <Chip
                       size="small"
-                      label={post.published ? "Published" : "Draft"}
+                      label={post.published ? t("posts.published") : t("posts.draft")}
                       color={post.published ? "success" : "warning"}
                       variant="outlined"
                     />

@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useMemo, useState, useCallback } from "react";
 import { api } from "../api";
+import { detectLang, translate, isSupported, LOCALES } from "../i18n";
 
 const AppContext = createContext(null);
 
@@ -14,9 +15,39 @@ export function AppProvider({ children }) {
     return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
   });
 
+  const [lang, setLangState] = useState(detectLang);
   const [settings, setSettings] = useState(null);
   const [user, setUser] = useState(null);
   const [ready, setReady] = useState(false);
+
+  const setLang = useCallback((next) => {
+    if (!isSupported(next)) return;
+    setLangState(next);
+    try {
+      localStorage.setItem("lang", next);
+    } catch {
+      // Non-fatal: the choice just won't persist across reloads.
+    }
+  }, []);
+
+  // Screen readers and browser translation prompts both read this.
+  useEffect(() => {
+    document.documentElement.lang = lang;
+  }, [lang]);
+
+  const t = useCallback((key, vars) => translate(lang, key, vars), [lang]);
+
+  const formatDate = useCallback(
+    (value) =>
+      value
+        ? new Date(value).toLocaleDateString(LOCALES[lang] || "en-US", {
+            year: "numeric",
+            month: "short",
+            day: "numeric",
+          })
+        : "",
+    [lang]
+  );
 
   const toggleMode = useCallback(() => {
     setMode((prev) => {
@@ -77,6 +108,10 @@ export function AppProvider({ children }) {
     () => ({
       mode,
       toggleMode,
+      lang,
+      setLang,
+      t,
+      formatDate,
       settings,
       setSettings,
       refreshSettings,
@@ -85,7 +120,7 @@ export function AppProvider({ children }) {
       logout,
       ready,
     }),
-    [mode, toggleMode, settings, refreshSettings, user, login, logout, ready]
+    [mode, toggleMode, lang, setLang, t, formatDate, settings, refreshSettings, user, login, logout, ready]
   );
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

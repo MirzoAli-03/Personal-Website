@@ -13,8 +13,10 @@ import {
 import CloseIcon from "@mui/icons-material/Close";
 
 import { uploadImageFile } from "../api";
+import { useApp } from "../context/AppContext";
 
 export default function ImagePicker({ open, images, onSelect, onClose, onUploaded }) {
+  const { t } = useApp();
   const [status, setStatus] = useState("");
   const [busy, setBusy] = useState(false);
 
@@ -24,7 +26,7 @@ export default function ImagePicker({ open, images, onSelect, onClose, onUploade
     if (!file) return;
 
     setBusy(true);
-    setStatus("Uploading…");
+    setStatus(t("picker.uploading"));
     try {
       const result = await uploadImageFile(file);
       await onUploaded?.();
@@ -40,8 +42,8 @@ export default function ImagePicker({ open, images, onSelect, onClose, onUploade
   return (
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth>
       <DialogTitle sx={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-        Choose an image
-        <IconButton onClick={onClose} size="small">
+        {t("picker.title")}
+        <IconButton onClick={onClose} size="small" aria-label={t("common.close")}>
           <CloseIcon />
         </IconButton>
       </DialogTitle>
@@ -49,17 +51,17 @@ export default function ImagePicker({ open, images, onSelect, onClose, onUploade
       <DialogContent dividers>
         <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 2 }} flexWrap="wrap" useFlexGap>
           <Button variant="outlined" component="label" size="small" disabled={busy}>
-            Upload new
+            {t("picker.uploadNew")}
             <input type="file" accept="image/*" hidden onChange={handleUpload} />
           </Button>
           <Typography variant="caption" color="text.secondary">
-            {status || "Images are resized in your browser before upload."}
+            {status || t("picker.hint")}
           </Typography>
         </Stack>
 
         {images.length === 0 ? (
           <Typography color="text.secondary" sx={{ py: 4, textAlign: "center" }}>
-            No images yet — upload one above.
+            {t("picker.empty")}
           </Typography>
         ) : (
           <Grid container spacing={2}>

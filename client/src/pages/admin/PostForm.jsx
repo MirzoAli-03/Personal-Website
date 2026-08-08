@@ -18,6 +18,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 
 import { api } from "../../api";
+import { useApp } from "../../context/AppContext";
 import RichTextEditor from "../../components/RichTextEditor";
 import ImagePicker from "../../components/ImagePicker";
 import ConfirmDialog from "../../components/ConfirmDialog";
@@ -48,7 +49,10 @@ export default function PostForm() {
   const { id } = useParams();
   const isEdit = Boolean(id);
   const navigate = useNavigate();
-  useDocumentTitle(isEdit ? "Edit post — Admin" : "New post — Admin");
+  const { t, formatDate } = useApp();
+  useDocumentTitle(
+    `${isEdit ? t("postForm.editTitle") : t("postForm.newTitle")} — Admin`
+  );
 
   const [form, setForm] = useState(EMPTY);
   const [images, setImages] = useState([]);
@@ -145,9 +149,11 @@ export default function PostForm() {
   return (
     <form onSubmit={handleSubmit}>
       <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 3 }} flexWrap="wrap" useFlexGap>
-        <Typography variant="h4">{isEdit ? "Edit post" : "New post"}</Typography>
+        <Typography variant="h4">
+          {isEdit ? t("postForm.editTitle") : t("postForm.newTitle")}
+        </Typography>
         <Button component={RouterLink} to="/admin/posts" startIcon={<ArrowBackIcon />}>
-          All posts
+          {t("postForm.allPosts")}
         </Button>
       </Stack>
 
@@ -158,7 +164,7 @@ export default function PostForm() {
           <Paper variant="outlined" sx={{ p: 3 }}>
             <Stack spacing={2.5}>
               <TextField
-                label="Title"
+                label={t("postForm.title")}
                 value={form.title}
                 onChange={set("title")}
                 required
@@ -166,17 +172,17 @@ export default function PostForm() {
                 size="medium"
               />
               <TextField
-                label="Excerpt"
+                label={t("postForm.excerpt")}
                 value={form.excerpt}
                 onChange={set("excerpt")}
                 multiline
                 rows={2}
                 fullWidth
-                helperText="Shown on the blog index"
+                helperText={t("postForm.excerptHelp")}
               />
               <Box>
                 <Typography variant="body2" fontWeight={600} sx={{ mb: 1 }}>
-                  Body
+                  {t("postForm.body")}
                 </Typography>
                 <RichTextEditor
                   value={form.body}
@@ -196,7 +202,7 @@ export default function PostForm() {
           <Stack spacing={2}>
             <Paper variant="outlined" sx={{ p: 3 }}>
               <Typography variant="subtitle1" gutterBottom>
-                Publish
+                {t("postForm.publish")}
               </Typography>
               <FormControlLabel
                 control={
@@ -205,17 +211,17 @@ export default function PostForm() {
                     onChange={(e) => setForm((prev) => ({ ...prev, published: e.target.checked }))}
                   />
                 }
-                label="Published"
+                label={t("postForm.published")}
               />
               <Typography variant="caption" color="text.secondary" display="block" sx={{ mb: 2 }}>
                 {form.published
                   ? publishedAt
-                    ? `Live since ${new Date(publishedAt).toLocaleDateString()}`
-                    : "Will go live when saved."
-                  : "Unchecked keeps this a private draft."}
+                    ? t("postForm.liveSince", { date: formatDate(publishedAt) })
+                    : t("postForm.willGoLive")
+                  : t("postForm.draftNote")}
               </Typography>
               <Button type="submit" variant="contained" fullWidth disabled={busy}>
-                {busy ? "Saving…" : "Save post"}
+                {busy ? t("common.saving") : t("postForm.save")}
               </Button>
               {isEdit && form.published && (
                 <Button
@@ -226,23 +232,28 @@ export default function PostForm() {
                   rel="noopener"
                   endIcon={<OpenInNewIcon />}
                 >
-                  View live
+                  {t("posts.viewLive")}
                 </Button>
               )}
             </Paper>
 
             <Paper variant="outlined" sx={{ p: 3 }}>
               <Typography variant="subtitle1" gutterBottom>
-                Details
+                {t("postForm.details")}
               </Typography>
               <Stack spacing={2}>
-                <TextField label="Tag" value={form.tag} onChange={set("tag")} fullWidth />
                 <TextField
-                  label="URL slug"
+                  label={t("postForm.tag")}
+                  value={form.tag}
+                  onChange={set("tag")}
+                  fullWidth
+                />
+                <TextField
+                  label={t("postForm.slug")}
                   value={form.slug}
                   onChange={set("slug")}
                   fullWidth
-                  placeholder="auto-generated from title"
+                  placeholder={t("postForm.slugPlaceholder")}
                   helperText={`/blog/${previewSlug || "…"}`}
                 />
               </Stack>
@@ -250,7 +261,7 @@ export default function PostForm() {
 
             <Paper variant="outlined" sx={{ p: 3 }}>
               <Typography variant="subtitle1" gutterBottom>
-                Cover image
+                {t("postForm.cover")}
               </Typography>
               <TextField
                 select
@@ -258,7 +269,7 @@ export default function PostForm() {
                 onChange={set("cover_image_id")}
                 fullWidth
               >
-                <MenuItem value="">None</MenuItem>
+                <MenuItem value="">{t("common.none")}</MenuItem>
                 {images.map((img) => (
                   <MenuItem key={img.id} value={img.id}>
                     {img.filename}
@@ -281,13 +292,13 @@ export default function PostForm() {
                   setPickerOpen(true);
                 }}
               >
-                Browse or upload →
+                {t("postForm.browse")} →
               </Button>
             </Paper>
 
             {isEdit && (
               <Button color="error" variant="outlined" onClick={() => setConfirmOpen(true)}>
-                Delete this post
+                {t("postForm.deletePost")}
               </Button>
             )}
           </Stack>
@@ -304,8 +315,8 @@ export default function PostForm() {
 
       <ConfirmDialog
         open={confirmOpen}
-        title="Delete post?"
-        message="This post will be permanently deleted. This cannot be undone."
+        title={t("posts.deleteTitle")}
+        message={t("postForm.deleteBody")}
         onConfirm={handleDelete}
         onClose={() => setConfirmOpen(false)}
       />
@@ -314,7 +325,7 @@ export default function PostForm() {
         open={saved}
         autoHideDuration={2500}
         onClose={() => setSaved(false)}
-        message="Saved"
+        message={t("common.saved")}
         anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
       />
     </form>

@@ -22,16 +22,17 @@ import MenuIcon from "@mui/icons-material/Menu";
 import { useState } from "react";
 
 import { useApp } from "../context/AppContext";
+import LanguageSwitcher from "./LanguageSwitcher";
 
 const NAV = [
-  { label: "Home", to: "/" },
-  { label: "Projects", to: "/projects" },
-  { label: "Blog", to: "/blog" },
-  { label: "Contact", to: "/contact" },
+  { key: "nav.home", to: "/" },
+  { key: "nav.projects", to: "/projects" },
+  { key: "nav.blog", to: "/blog" },
+  { key: "nav.contact", to: "/contact" },
 ];
 
 export default function PublicLayout() {
-  const { settings, mode, toggleMode, user } = useApp();
+  const { settings, mode, toggleMode, user, t } = useApp();
   const { pathname } = useLocation();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
@@ -82,18 +83,20 @@ export default function PublicLayout() {
                       fontWeight: isActive(item.to) ? 700 : 500,
                     }}
                   >
-                    {item.label}
+                    {t(item.key)}
                   </Button>
                 ))}
               </Stack>
             )}
 
-            <IconButton onClick={toggleMode} aria-label="Toggle theme">
+            <LanguageSwitcher size="small" />
+
+            <IconButton onClick={toggleMode} aria-label={t("nav.toggleTheme")}>
               {mode === "dark" ? <LightModeIcon /> : <DarkModeIcon />}
             </IconButton>
 
             {isMobile && (
-              <IconButton onClick={() => setDrawerOpen(true)} aria-label="Open menu">
+              <IconButton onClick={() => setDrawerOpen(true)} aria-label={t("nav.openMenu")}>
                 <MenuIcon />
               </IconButton>
             )}
@@ -111,7 +114,7 @@ export default function PublicLayout() {
               selected={isActive(item.to)}
               onClick={() => setDrawerOpen(false)}
             >
-              <ListItemText primary={item.label} />
+              <ListItemText primary={t(item.key)} />
             </ListItemButton>
           ))}
         </List>
@@ -130,7 +133,7 @@ export default function PublicLayout() {
             spacing={2}
           >
             <Typography variant="body2" color="text.secondary">
-              © {new Date().getFullYear()} {settings?.full_name || ""}. All rights reserved.
+              © {new Date().getFullYear()} {settings?.full_name || ""}. {t("footer.rights")}
             </Typography>
             <Stack direction="row" spacing={2}>
               {socials.map(([label, url]) => (
@@ -154,7 +157,7 @@ export default function PublicLayout() {
                   color="text.secondary"
                   underline="hover"
                 >
-                  Admin
+                  {t("nav.admin")}
                 </Link>
               )}
             </Stack>

@@ -20,12 +20,14 @@ import StarIcon from "@mui/icons-material/Star";
 
 import { api } from "../../api";
 import { useAsync } from "../../hooks/useAsync";
+import { useApp } from "../../context/AppContext";
 import { Loading, ErrorState, Empty } from "../../components/PageState";
 import ConfirmDialog from "../../components/ConfirmDialog";
 import { useDocumentTitle } from "../../hooks/useDocumentTitle";
 
 export default function AdminProjects() {
-  useDocumentTitle("Projects — Admin");
+  const { t } = useApp();
+  useDocumentTitle(`${t("projectsAdmin.title")} — Admin`);
 
   const { data: projects, loading, error, reload, setData } = useAsync(() => api.getProjects(), []);
   const [pending, setPending] = useState(null);
@@ -44,9 +46,9 @@ export default function AdminProjects() {
   return (
     <>
       <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 3 }} flexWrap="wrap" useFlexGap>
-        <Typography variant="h4">Projects</Typography>
+        <Typography variant="h4">{t("projectsAdmin.title")}</Typography>
         <Button component={RouterLink} to="/admin/projects/new" variant="contained">
-          Add a project
+          {t("projectsAdmin.add")}
         </Button>
       </Stack>
 
@@ -56,17 +58,17 @@ export default function AdminProjects() {
       {projects && (
         <Paper variant="outlined" sx={{ overflowX: "auto" }}>
           {projects.length === 0 ? (
-            <Empty>No projects yet.</Empty>
+            <Empty>{t("projectsAdmin.empty")}</Empty>
           ) : (
             <Table size="small">
               <TableHead>
                 <TableRow>
                   <TableCell />
-                  <TableCell>Title</TableCell>
-                  <TableCell>Tags</TableCell>
-                  <TableCell align="center">Featured</TableCell>
-                  <TableCell align="center">Order</TableCell>
-                  <TableCell align="right">Actions</TableCell>
+                  <TableCell>{t("projectsAdmin.colTitle")}</TableCell>
+                  <TableCell>{t("projectsAdmin.colTags")}</TableCell>
+                  <TableCell align="center">{t("projectsAdmin.colFeatured")}</TableCell>
+                  <TableCell align="center">{t("projectsAdmin.colOrder")}</TableCell>
+                  <TableCell align="right">{t("common.actions")}</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -110,7 +112,7 @@ export default function AdminProjects() {
                       {project.sort_order}
                     </TableCell>
                     <TableCell align="right" sx={{ whiteSpace: "nowrap" }}>
-                      <Tooltip title="Edit">
+                      <Tooltip title={t("common.edit")}>
                         <IconButton
                           size="small"
                           component={RouterLink}
@@ -119,7 +121,7 @@ export default function AdminProjects() {
                           <EditIcon fontSize="small" />
                         </IconButton>
                       </Tooltip>
-                      <Tooltip title="Delete">
+                      <Tooltip title={t("common.delete")}>
                         <IconButton size="small" color="error" onClick={() => setPending(project)}>
                           <DeleteIcon fontSize="small" />
                         </IconButton>
@@ -135,8 +137,8 @@ export default function AdminProjects() {
 
       <ConfirmDialog
         open={Boolean(pending)}
-        title="Delete project?"
-        message={`"${pending?.title}" will be permanently deleted.`}
+        title={t("projectsAdmin.deleteTitle")}
+        message={t("projectsAdmin.deleteBody", { title: pending?.title })}
         onConfirm={confirmDelete}
         onClose={() => setPending(null)}
       />
