@@ -2,11 +2,13 @@ import { Outlet, Link as RouterLink, useLocation } from "react-router-dom";
 import {
   AppBar,
   Toolbar,
+  Avatar,
   Box,
   Button,
   Container,
   IconButton,
   Stack,
+  Tooltip,
   Typography,
   Link,
   Drawer,
@@ -14,6 +16,7 @@ import {
   ListItemButton,
   ListItemText,
   useMediaQuery,
+  useScrollTrigger,
   useTheme,
 } from "@mui/material";
 import DarkModeIcon from "@mui/icons-material/DarkModeOutlined";
@@ -24,6 +27,7 @@ import { useState } from "react";
 import { useApp } from "../context/AppContext";
 import LanguageSwitcher from "./LanguageSwitcher";
 import MeshBackground from "./MeshBackground";
+import ProfileModal from "./ProfileModal";
 
 const NAV = [
   { key: "nav.home", to: "/" },
@@ -38,6 +42,11 @@ export default function PublicLayout() {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
+
+  // Transparent over the hero, then a backdrop once content scrolls beneath —
+  // without it the nav becomes unreadable the moment a card passes under it.
+  const scrolled = useScrollTrigger({ disableHysteresis: true, threshold: 8 });
 
   const isActive = (to) => (to === "/" ? pathname === "/" : pathname.startsWith(to));
 
@@ -65,23 +74,59 @@ export default function PublicLayout() {
         elevation={0}
         color="transparent"
         sx={{
-          backdropFilter: "saturate(180%) blur(12px)",
           bgcolor: (t) =>
-            t.palette.mode === "dark" ? "rgba(17,17,20,.85)" : "rgba(255,255,255,.85)",
+            scrolled
+              ? t.palette.mode === "dark"
+                ? "rgba(17,17,20,.72)"
+                : "rgba(255,255,255,.72)"
+              : "transparent",
+          backdropFilter: scrolled ? "saturate(180%) blur(12px)" : "none",
           borderBottom: 1,
-          borderColor: "divider",
+          borderColor: scrolled ? "divider" : "transparent",
+          transition: "background-color .25s ease, border-color .25s ease",
         }}
       >
         <Container maxWidth="lg">
           <Toolbar disableGutters sx={{ gap: 2 }}>
-            <Typography
-              component={RouterLink}
-              to="/"
-              variant="h6"
-              sx={{ textDecoration: "none", color: "text.primary", flexGrow: 1 }}
-            >
-              {settings?.full_name || "Personal Website"}
-            </Typography>
+            <Stack direction="row" alignItems="center" spacing={1.25} sx={{ flexGrow: 1 }}>
+              <Typography
+                component={RouterLink}
+                to="/"
+                variant="h6"
+                sx={{ textDecoration: "none", color: "text.primary" }}
+              >
+                {settings?.full_name || "Personal Website"}
+              </Typography>
+
+              <Tooltip title={settings?.full_name || ""}>
+                <IconButton
+                  onClick={() => setProfileOpen(true)}
+                  size="small"
+                  aria-label={settings?.full_name || "Profile"}
+                  sx={{ p: 0.25 }}
+                >
+                  <Avatar
+                    src={
+                      settings?.avatar_image_id
+                        ? `/images/${settings.avatar_image_id}`
+                        : undefined
+                    }
+                    alt=""
+                    sx={{
+                      width: 32,
+                      height: 32,
+                      fontSize: ".9rem",
+                      border: 2,
+                      borderColor: "transparent",
+                      transition: "border-color .15s ease",
+                      "&:hover": { borderColor: "primary.main" },
+                    }}
+                  >
+                    {settings?.full_name?.[0]?.toUpperCase()}
+                  </Avatar>
+                </IconButton>
+              </Tooltip>
+            </Stack>
 
             {!isMobile && (
               <Stack direction="row" spacing={1}>
@@ -177,6 +222,8 @@ export default function PublicLayout() {
         </Container>
         </Box>
       </Box>
+
+      <ProfileModal open={profileOpen} onClose={() => setProfileOpen(false)} />
     </Box>
   );
 }
