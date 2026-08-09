@@ -23,6 +23,7 @@ import { useState } from "react";
 
 import { useApp } from "../context/AppContext";
 import LanguageSwitcher from "./LanguageSwitcher";
+import MeshBackground from "./MeshBackground";
 
 const NAV = [
   { key: "nav.home", to: "/" },
@@ -48,6 +49,17 @@ export default function PublicLayout() {
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
+      <MeshBackground />
+      {/* Own stacking context so every child sits above the mesh. */}
+      <Box
+        sx={{
+          position: "relative",
+          zIndex: 1,
+          display: "flex",
+          flexDirection: "column",
+          minHeight: "100vh",
+        }}
+      >
       <AppBar
         position="sticky"
         elevation={0}
@@ -163,6 +175,7 @@ export default function PublicLayout() {
             </Stack>
           </Stack>
         </Container>
+        </Box>
       </Box>
     </Box>
   );
