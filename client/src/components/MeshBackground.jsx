@@ -10,7 +10,9 @@ import { Box } from "@mui/material";
 // Fixed rather than scrolling, so long pages don't drag the blobs past the
 // reader. Sits above the body background but below everything else, which is
 // why the layout's content is given its own stacking context.
-export default function MeshBackground() {
+// `subtle` halves the strength for the admin panel, where dense tables and
+// form labels need the ground to stay quiet.
+export default function MeshBackground({ subtle = false }) {
   return (
     <Box
       aria-hidden="true"
@@ -40,7 +42,10 @@ export default function MeshBackground() {
           // viewport boundary.
           inset: "-25%",
           filter: { xs: "blur(70px)", md: "blur(100px)" },
-          opacity: (t) => (t.palette.mode === "dark" ? 0.5 : 0.75),
+          opacity: (t) => {
+            const base = t.palette.mode === "dark" ? 0.5 : 0.75;
+            return subtle ? base * 0.45 : base;
+          },
           background: (t) => {
             const dark = t.palette.mode === "dark";
             // Indigo primary, plus an analogous violet and teal. Staying near

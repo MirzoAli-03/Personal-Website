@@ -16,7 +16,6 @@ import {
   ListItemButton,
   ListItemText,
   useMediaQuery,
-  useScrollTrigger,
   useTheme,
 } from "@mui/material";
 import DarkModeIcon from "@mui/icons-material/DarkModeOutlined";
@@ -28,6 +27,7 @@ import { useApp } from "../context/AppContext";
 import LanguageSwitcher from "./LanguageSwitcher";
 import MeshBackground from "./MeshBackground";
 import ProfileModal from "./ProfileModal";
+import { useScrolled } from "../hooks/useScrolled";
 
 const NAV = [
   { key: "nav.home", to: "/" },
@@ -46,7 +46,7 @@ export default function PublicLayout() {
 
   // Transparent over the hero, then a backdrop once content scrolls beneath —
   // without it the nav becomes unreadable the moment a card passes under it.
-  const scrolled = useScrollTrigger({ disableHysteresis: true, threshold: 8 });
+  const scrolled = useScrolled();
 
   const isActive = (to) => (to === "/" ? pathname === "/" : pathname.startsWith(to));
 

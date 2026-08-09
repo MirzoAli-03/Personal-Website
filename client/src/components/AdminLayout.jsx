@@ -1,12 +1,15 @@
 import { Outlet, Link as RouterLink, useLocation, useNavigate } from "react-router-dom";
+import { useState } from "react";
 import {
   AppBar,
   Toolbar,
+  Avatar,
   Box,
   Button,
   Container,
   IconButton,
   Stack,
+  Tooltip,
   Typography,
   Tabs,
   Tab,
@@ -19,6 +22,9 @@ import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 
 import { useApp } from "../context/AppContext";
 import LanguageSwitcher from "./LanguageSwitcher";
+import MeshBackground from "./MeshBackground";
+import ProfileModal from "./ProfileModal";
+import { useScrolled } from "../hooks/useScrolled";
 
 const SECTIONS = [
   { key: "admin.dashboard", to: "/admin" },
@@ -29,11 +35,15 @@ const SECTIONS = [
 ];
 
 export default function AdminLayout() {
-  const { mode, toggleMode, logout, t } = useApp();
+  const { mode, toggleMode, logout, t, settings } = useApp();
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const [profileOpen, setProfileOpen] = useState(false);
+
+  // Transparent until content scrolls beneath, matching the public header.
+  const scrolled = useScrolled();
 
   // Longest matching prefix, so /admin/posts/3/edit still selects "Posts"
   // rather than falling back to the "/admin" index.
@@ -48,11 +58,55 @@ export default function AdminLayout() {
   }
 
   return (
-    <Box sx={{ minHeight: "100vh", bgcolor: "background.default" }}>
-      <AppBar position="sticky" elevation={0} color="transparent"
-        sx={{ bgcolor: "background.paper", borderBottom: 1, borderColor: "divider" }}>
+    <Box sx={{ minHeight: "100vh" }}>
+      <MeshBackground subtle />
+      {/* Own stacking context so the panel sits above the mesh. */}
+      <Box sx={{ position: "relative", zIndex: 1, minHeight: "100vh" }}>
+      <AppBar
+        position="sticky"
+        elevation={0}
+        color="transparent"
+        sx={{
+          bgcolor: (th) =>
+            scrolled
+              ? th.palette.mode === "dark"
+                ? "rgba(17,18,20,.78)"
+                : "rgba(255,255,255,.78)"
+              : "transparent",
+          backdropFilter: scrolled ? "saturate(180%) blur(12px)" : "none",
+          borderBottom: 1,
+          borderColor: scrolled ? "divider" : "transparent",
+          transition: "background-color .25s ease, border-color .25s ease",
+        }}
+      >
         <Container maxWidth="lg">
           <Toolbar disableGutters sx={{ gap: 2, flexWrap: "wrap" }}>
+            <Tooltip title={settings?.full_name || ""}>
+              <IconButton
+                onClick={() => setProfileOpen(true)}
+                size="small"
+                aria-label={settings?.full_name || "Profile"}
+                sx={{ p: 0.25 }}
+              >
+                <Avatar
+                  src={
+                    settings?.avatar_image_id ? `/images/${settings.avatar_image_id}` : undefined
+                  }
+                  alt=""
+                  sx={{
+                    width: 32,
+                    height: 32,
+                    fontSize: ".9rem",
+                    border: 2,
+                    borderColor: "transparent",
+                    transition: "border-color .15s ease",
+                    "&:hover": { borderColor: "primary.main" },
+                  }}
+                >
+                  {settings?.full_name?.[0]?.toUpperCase()}
+                </Avatar>
+              </IconButton>
+            </Tooltip>
             <Typography variant="h6" sx={{ fontWeight: 700 }}>
               Admin
             </Typography>
@@ -95,6 +149,9 @@ export default function AdminLayout() {
       <Container maxWidth="lg" sx={{ py: 4 }}>
         <Outlet />
       </Container>
+      </Box>
+
+      <ProfileModal open={profileOpen} onClose={() => setProfileOpen(false)} />
     </Box>
   );
 }
