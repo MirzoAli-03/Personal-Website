@@ -34,42 +34,54 @@ export default function Home() {
 
   return (
     <>
-      {/* No portrait here — the avatar lives in the header, where clicking it
-          opens the profile card. */}
-      <Container maxWidth="lg" sx={{ pt: { xs: 7, md: 11 }, pb: 6 }}>
+      {/* No portrait here — the avatar lives in the header. With nothing on the
+          right, the headline is scaled to span the full measure instead;
+          type filling the space reads deliberate, a small headline beside a
+          void reads unfinished. */}
+      <Container maxWidth="lg" sx={{ pt: { xs: 6, md: 9 }, pb: { xs: 6, md: 8 } }}>
         {(settings?.role || settings?.location) && (
           <Typography variant="overline" color="primary" fontWeight={700} letterSpacing=".12em">
             {[settings.role, settings.location].filter(Boolean).join(" · ")}
           </Typography>
         )}
-        {/* Deliberate scale jump: the headline is the only large thing on the
-            page, so the eye has somewhere to land. */}
         <Typography
           variant="h1"
           sx={{
-            fontSize: { xs: "2.4rem", sm: "3.2rem", md: "4.2rem" },
-            lineHeight: 1.04,
-            letterSpacing: "-.035em",
-            maxWidth: "18ch",
-            mt: 1,
-            mb: 2.5,
+            // Scales with the viewport so it keeps filling the width rather
+            // than stopping short on wide screens.
+            fontSize: "clamp(2.5rem, 7.2vw, 5.6rem)",
+            lineHeight: 0.98,
+            letterSpacing: "-.04em",
+            maxWidth: "22ch",
+            mt: 1.5,
+            mb: 3,
             textWrap: "balance",
           }}
         >
           {settings?.hero_heading || settings?.full_name}
         </Typography>
-        {settings?.tagline && (
-          <Typography color="text.secondary" sx={{ maxWidth: "52ch", fontSize: "1.08rem", mb: 4 }}>
-            {settings.tagline}
-          </Typography>
-        )}
-        <Stack direction="row" spacing={2} flexWrap="wrap" useFlexGap>
-          <Button component={RouterLink} to="/projects" variant="contained" size="large">
-            {t("home.viewWork")}
-          </Button>
-          <Button component={RouterLink} to="/contact" variant="outlined" size="large">
-            {t("home.getInTouch")}
-          </Button>
+
+        <Stack
+          direction={{ xs: "column", md: "row" }}
+          spacing={{ xs: 3, md: 6 }}
+          alignItems={{ xs: "flex-start", md: "flex-end" }}
+        >
+          {settings?.tagline && (
+            <Typography
+              color="text.secondary"
+              sx={{ maxWidth: "44ch", fontSize: "1.1rem", flex: 1 }}
+            >
+              {settings.tagline}
+            </Typography>
+          )}
+          <Stack direction="row" spacing={2} flexWrap="wrap" useFlexGap sx={{ flex: "none" }}>
+            <Button component={RouterLink} to="/projects" variant="contained" size="large">
+              {t("home.viewWork")}
+            </Button>
+            <Button component={RouterLink} to="/contact" variant="outlined" size="large">
+              {t("home.getInTouch")}
+            </Button>
+          </Stack>
         </Stack>
       </Container>
 
