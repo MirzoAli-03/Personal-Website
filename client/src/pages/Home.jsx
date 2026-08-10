@@ -132,6 +132,10 @@ export default function Home() {
                 sx={{
                   maxWidth: "44ch",
                   fontSize: "1.1rem",
+                  // Medium weight: regular read thin beside a heavy display
+                  // serif, which made the tagline look like a caption rather
+                  // than the second thing you should read.
+                  fontWeight: 500,
                   flex: 1,
                   // Over a photo the secondary grey loses too much contrast.
                   color: heroPhoto ? "text.primary" : "text.secondary",
