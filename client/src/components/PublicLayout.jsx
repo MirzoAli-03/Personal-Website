@@ -26,6 +26,8 @@ import { useState } from "react";
 import { useApp } from "../context/AppContext";
 import LanguageSwitcher from "./LanguageSwitcher";
 import ProfileModal from "./ProfileModal";
+import MeshBackground from "./MeshBackground";
+import ParticleNetwork from "./ParticleNetwork";
 import { useScrolled } from "../hooks/useScrolled";
 
 const NAV = [
@@ -48,6 +50,7 @@ export default function PublicLayout() {
   const scrolled = useScrolled();
 
   const isActive = (to) => (to === "/" ? pathname === "/" : pathname.startsWith(to));
+  const background = settings?.background_style || "none";
 
   const socials = [
     ["GitHub", settings?.github_url],
@@ -57,8 +60,14 @@ export default function PublicLayout() {
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
+      {background === "mesh" && <MeshBackground />}
+      {background === "particles" && <ParticleNetwork />}
+
+      {/* Own stacking context so content always sits above the background. */}
       <Box
         sx={{
+          position: "relative",
+          zIndex: 1,
           display: "flex",
           flexDirection: "column",
           minHeight: "100vh",

@@ -97,6 +97,12 @@ async function main() {
     ALTER TABLE site_settings
     ADD COLUMN IF NOT EXISTS hero_image_id INTEGER REFERENCES images(id) ON DELETE SET NULL
   `;
+  // Page background: 'none' | 'mesh' | 'particles'. Independent of the hero
+  // photo, which is its own layer.
+  await sql`
+    ALTER TABLE site_settings
+    ADD COLUMN IF NOT EXISTS background_style TEXT NOT NULL DEFAULT 'none'
+  `;
 
   await sql`CREATE INDEX IF NOT EXISTS posts_published_idx ON posts (published, published_at DESC)`;
   await sql`CREATE INDEX IF NOT EXISTS projects_sort_idx ON projects (sort_order, id)`;

@@ -254,6 +254,10 @@ router.put(
       bio: String(b.bio || "").trim(),
       avatar_image_id: toIntOrNull(b.avatar_image_id),
       hero_image_id: toIntOrNull(b.hero_image_id),
+      // Whitelisted so an unexpected value can never reach the page.
+      background_style: ["none", "mesh", "particles"].includes(b.background_style)
+        ? b.background_style
+        : "none",
       skills: parseTags(b.skills),
       email: String(b.email || "").trim(),
       github_url: String(b.github_url || "").trim(),

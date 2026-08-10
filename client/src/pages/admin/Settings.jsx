@@ -4,6 +4,7 @@ import {
   Avatar,
   Box,
   Button,
+  MenuItem,
   Paper,
   Snackbar,
   Stack,
@@ -45,6 +46,7 @@ export default function Settings() {
       location: settings.location || "",
       avatar_image_id: settings.avatar_image_id ?? "",
       hero_image_id: settings.hero_image_id ?? "",
+      background_style: settings.background_style || "none",
       hero_heading: settings.hero_heading || "",
       tagline: settings.tagline || "",
       bio: settings.bio || "",
@@ -174,6 +176,31 @@ export default function Settings() {
             helperText={t("settings.skillsHelp")}
           />
         </Stack>
+      </Paper>
+
+      <Paper variant="outlined" sx={{ p: 3, mb: 3 }}>
+        <Typography variant="h6" gutterBottom>
+          {t("settings.background")}
+        </Typography>
+        <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+          {t("settings.backgroundHelp")}
+        </Typography>
+        <TextField
+          select
+          value={form.background_style}
+          onChange={set("background_style")}
+          fullWidth
+          sx={{ maxWidth: 340 }}
+        >
+          <MenuItem value="none">{t("settings.bgNone")}</MenuItem>
+          <MenuItem value="mesh">{t("settings.bgMesh")}</MenuItem>
+          <MenuItem value="particles">{t("settings.bgParticles")}</MenuItem>
+        </TextField>
+        {form.background_style === "particles" && (
+          <Typography variant="caption" color="text.secondary" display="block" sx={{ mt: 1.5 }}>
+            {t("settings.bgParticlesNote")}
+          </Typography>
+        )}
       </Paper>
 
       <Paper variant="outlined" sx={{ p: 3, mb: 3 }}>

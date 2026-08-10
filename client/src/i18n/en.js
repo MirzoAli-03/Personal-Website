@@ -198,6 +198,15 @@ export default {
   "settings.addPhoto": "Add photo",
   "settings.changePhoto": "Change",
   "settings.removePhoto": "Remove",
+  "settings.background": "Page background",
+  "settings.backgroundHelp":
+    "Applies behind every public page. The hero photo below is a separate layer and works with any of these.",
+  "settings.bgNone": "None — plain background",
+  "settings.bgMesh": "Gradient mesh — soft blurred colour",
+  "settings.bgParticles": "Particle network — animated dots and lines",
+  "settings.bgParticlesNote":
+    "Animation is disabled automatically for visitors who have reduced motion turned on, and pauses when the tab is in the background.",
+
   "settings.heroImage": "Home page background",
   "settings.heroImageHelp":
     "A photo behind the hero text. A darkening layer is applied automatically so the heading stays readable — pick something without busy detail in the lower half.",
