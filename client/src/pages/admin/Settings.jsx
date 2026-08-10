@@ -183,8 +183,11 @@ export default function Settings() {
           <MenuItem value="mesh">{t("settings.bgMesh")}</MenuItem>
           <MenuItem value="particles">{t("settings.bgParticles")}</MenuItem>
           <MenuItem value="contours">{t("settings.bgContours")}</MenuItem>
+          <MenuItem value="halftone">{t("settings.bgHalftone")}</MenuItem>
+          <MenuItem value="ribbons">{t("settings.bgRibbons")}</MenuItem>
+          <MenuItem value="aurora">{t("settings.bgAurora")}</MenuItem>
         </TextField>
-        {(form.background_style === "particles" || form.background_style === "contours") && (
+        {form.background_style !== "none" && form.background_style !== "mesh" && (
           <Typography variant="caption" color="text.secondary" display="block" sx={{ mt: 1.5 }}>
             {t("settings.bgParticlesNote")}
           </Typography>

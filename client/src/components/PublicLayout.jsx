@@ -29,6 +29,18 @@ import ProfileModal from "./ProfileModal";
 import MeshBackground from "./MeshBackground";
 import ParticleNetwork from "./ParticleNetwork";
 import ContourField from "./ContourField";
+import HalftoneWave from "./HalftoneWave";
+import FlowRibbons from "./FlowRibbons";
+import AuroraBands from "./AuroraBands";
+
+const BACKGROUNDS = {
+  mesh: MeshBackground,
+  particles: ParticleNetwork,
+  contours: ContourField,
+  halftone: HalftoneWave,
+  ribbons: FlowRibbons,
+  aurora: AuroraBands,
+};
 import { useScrolled } from "../hooks/useScrolled";
 
 const NAV = [
@@ -51,7 +63,7 @@ export default function PublicLayout() {
   const scrolled = useScrolled();
 
   const isActive = (to) => (to === "/" ? pathname === "/" : pathname.startsWith(to));
-  const background = settings?.background_style || "none";
+  const Background = BACKGROUNDS[settings?.background_style] || null;
 
   const socials = [
     ["GitHub", settings?.github_url],
@@ -61,9 +73,7 @@ export default function PublicLayout() {
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
-      {background === "mesh" && <MeshBackground />}
-      {background === "particles" && <ParticleNetwork />}
-      {background === "contours" && <ContourField />}
+      {Background && <Background />}
 
       {/* Own stacking context so content always sits above the background. */}
       <Box

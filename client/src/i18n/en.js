@@ -205,6 +205,9 @@ export default {
   "settings.bgMesh": "Gradient mesh — soft blurred colour",
   "settings.bgParticles": "Particle network — animated dots and lines",
   "settings.bgContours": "Contour lines — drifting topographic ridges",
+  "settings.bgHalftone": "Halftone — a print dot screen with a slow swell",
+  "settings.bgRibbons": "Flow ribbons — strands tracing a turning current",
+  "settings.bgAurora": "Aurora — soft curtains of light, the calmest option",
   "settings.bgParticlesNote":
     "Animation is disabled automatically for visitors who have reduced motion turned on, and pauses when the tab is in the background.",
 
