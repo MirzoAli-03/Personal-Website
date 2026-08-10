@@ -17,7 +17,6 @@ async function updateSettings(data) {
       hero_heading    = ${data.hero_heading},
       bio             = ${data.bio},
       avatar_image_id = ${data.avatar_image_id},
-      hero_image_id   = ${data.hero_image_id},
       background_style = ${data.background_style},
       skills          = ${data.skills},
       email           = ${data.email},

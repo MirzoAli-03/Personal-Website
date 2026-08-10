@@ -207,10 +207,6 @@ export default {
   "settings.bgParticlesNote":
     "Animation is disabled automatically for visitors who have reduced motion turned on, and pauses when the tab is in the background.",
 
-  "settings.heroImage": "Home page background",
-  "settings.heroImageHelp":
-    "A photo behind the hero text. A darkening layer is applied automatically so the heading stays readable — pick something without busy detail in the lower half.",
-  "settings.heroImageNone": "No background photo",
   "settings.heading": "Home page heading",
   "settings.tagline": "Tagline",
   "settings.taglineHelp": "The paragraph under your heading",

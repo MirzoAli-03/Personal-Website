@@ -41,73 +41,10 @@ export default function Home() {
     []
   );
 
-  const heroPhoto = settings?.hero_image_id;
-
   return (
     <>
-      {/*
-        Optional full-bleed photo behind the hero. A photo's contrast varies
-        across the frame, so text placed on one is only readable by accident —
-        the scrim below is what makes it dependable. It runs from near-opaque
-        at the bottom, where the text sits, to light at the top, so the image
-        is still legible as an image. With no photo set, the hero renders on
-        the plain ground exactly as before.
-      */}
-      <Box
-        sx={{
-          position: "relative",
-          ...(heroPhoto && {
-            minHeight: { xs: 520, md: 640 },
-            display: "flex",
-            alignItems: "flex-end",
-            mb: { xs: 2, md: 4 },
-            // Full-bleed: escape the page gutters to the viewport edges.
-            width: "100vw",
-            marginLeft: "calc(50% - 50vw)",
-            marginRight: "calc(50% - 50vw)",
-            overflow: "hidden",
-          }),
-        }}
-      >
-        {heroPhoto && (
-          <>
-            <Box
-              component="img"
-              src={`/images/${heroPhoto}`}
-              alt=""
-              aria-hidden="true"
-              sx={{
-                position: "absolute",
-                inset: 0,
-                width: "100%",
-                height: "100%",
-                objectFit: "cover",
-                // Pulls detail down so the type has a calmer field to sit on.
-                filter: "saturate(.85)",
-              }}
-            />
-            <Box
-              aria-hidden="true"
-              sx={{
-                position: "absolute",
-                inset: 0,
-                background: (th) =>
-                  th.palette.mode === "dark"
-                    ? "linear-gradient(to top, rgba(15,16,19,.94) 0%, rgba(15,16,19,.86) 34%, rgba(15,16,19,.52) 68%, rgba(15,16,19,.34) 100%)"
-                    : "linear-gradient(to top, rgba(252,252,253,.95) 0%, rgba(252,252,253,.88) 34%, rgba(252,252,253,.56) 68%, rgba(252,252,253,.36) 100%)",
-              }}
-            />
-          </>
-        )}
-
-        <Container
-          maxWidth="lg"
-          sx={{
-            position: "relative",
-            pt: heroPhoto ? { xs: 8, md: 10 } : { xs: 6, md: 9 },
-            pb: heroPhoto ? { xs: 6, md: 7 } : { xs: 6, md: 8 },
-          }}
-        >
+      <Box>
+        <Container maxWidth="lg" sx={{ pt: { xs: 6, md: 9 }, pb: { xs: 6, md: 8 } }}>
           {(settings?.role || settings?.location) && (
             <Typography variant="overline" color="primary" fontWeight={700} letterSpacing=".12em">
               {[settings.role, settings.location].filter(Boolean).join(" · ")}

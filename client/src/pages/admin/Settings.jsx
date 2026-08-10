@@ -26,8 +26,6 @@ export default function Settings() {
   const [form, setForm] = useState(null);
   const [images, setImages] = useState([]);
   const [pickerOpen, setPickerOpen] = useState(false);
-  // Which field the image picker is filling — avatar or hero background.
-  const [pickerTarget, setPickerTarget] = useState("avatar");
   const [error, setError] = useState(null);
   const [saved, setSaved] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -45,7 +43,6 @@ export default function Settings() {
       role: settings.role || "",
       location: settings.location || "",
       avatar_image_id: settings.avatar_image_id ?? "",
-      hero_image_id: settings.hero_image_id ?? "",
       background_style: settings.background_style || "none",
       hero_heading: settings.hero_heading || "",
       tagline: settings.tagline || "",
@@ -67,11 +64,7 @@ export default function Settings() {
     setBusy(true);
     setError(null);
     try {
-      await api.updateSettings({
-        ...form,
-        avatar_image_id: form.avatar_image_id || null,
-        hero_image_id: form.hero_image_id || null,
-      });
+      await api.updateSettings({ ...form, avatar_image_id: form.avatar_image_id || null });
       await refreshSettings();
       setSaved(true);
     } catch (err) {
@@ -105,13 +98,7 @@ export default function Settings() {
               >
                 {form.full_name?.[0]?.toUpperCase() || "?"}
               </Avatar>
-              <Button
-                size="small"
-                onClick={() => {
-                  setPickerTarget("avatar");
-                  setPickerOpen(true);
-                }}
-              >
+              <Button size="small" onClick={() => setPickerOpen(true)}>
                 {form.avatar_image_id ? t("settings.changePhoto") : t("settings.addPhoto")}
               </Button>
               {form.avatar_image_id && (
@@ -203,71 +190,6 @@ export default function Settings() {
         )}
       </Paper>
 
-      <Paper variant="outlined" sx={{ p: 3, mb: 3 }}>
-        <Typography variant="h6" gutterBottom>
-          {t("settings.heroImage")}
-        </Typography>
-        <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-          {t("settings.heroImageHelp")}
-        </Typography>
-
-        {form.hero_image_id ? (
-          <Box
-            component="img"
-            src={`/images/${form.hero_image_id}`}
-            alt=""
-            sx={{
-              width: "100%",
-              height: 160,
-              objectFit: "cover",
-              borderRadius: 1,
-              border: 1,
-              borderColor: "divider",
-              mb: 1.5,
-              display: "block",
-            }}
-          />
-        ) : (
-          <Box
-            sx={{
-              height: 160,
-              borderRadius: 1,
-              border: 1,
-              borderStyle: "dashed",
-              borderColor: "divider",
-              display: "grid",
-              placeItems: "center",
-              color: "text.secondary",
-              fontSize: "0.88rem",
-              mb: 1.5,
-            }}
-          >
-            {t("settings.heroImageNone")}
-          </Box>
-        )}
-
-        <Stack direction="row" spacing={1}>
-          <Button
-            size="small"
-            onClick={() => {
-              setPickerTarget("hero");
-              setPickerOpen(true);
-            }}
-          >
-            {form.hero_image_id ? t("settings.changePhoto") : t("settings.addPhoto")}
-          </Button>
-          {form.hero_image_id && (
-            <Button
-              size="small"
-              color="error"
-              onClick={() => setForm((p) => ({ ...p, hero_image_id: "" }))}
-            >
-              {t("settings.removePhoto")}
-            </Button>
-          )}
-        </Stack>
-      </Paper>
-
       <Paper variant="outlined" sx={{ p: 3 }}>
         <Typography variant="h6" gutterBottom>
           {t("settings.links")}
@@ -296,9 +218,7 @@ export default function Settings() {
         open={pickerOpen}
         images={images}
         onSelect={(id) => {
-          setForm((p) =>
-            pickerTarget === "hero" ? { ...p, hero_image_id: id } : { ...p, avatar_image_id: id }
-          );
+          setForm((p) => ({ ...p, avatar_image_id: id }));
           setPickerOpen(false);
         }}
         onClose={() => setPickerOpen(false)}

@@ -93,12 +93,7 @@ async function main() {
   `;
   await sql`ALTER TABLE site_settings ADD COLUMN IF NOT EXISTS role TEXT NOT NULL DEFAULT ''`;
   await sql`ALTER TABLE site_settings ADD COLUMN IF NOT EXISTS location TEXT NOT NULL DEFAULT ''`;
-  await sql`
-    ALTER TABLE site_settings
-    ADD COLUMN IF NOT EXISTS hero_image_id INTEGER REFERENCES images(id) ON DELETE SET NULL
-  `;
-  // Page background: 'none' | 'mesh' | 'particles'. Independent of the hero
-  // photo, which is its own layer.
+  // Page background: 'none' | 'mesh' | 'particles'.
   await sql`
     ALTER TABLE site_settings
     ADD COLUMN IF NOT EXISTS background_style TEXT NOT NULL DEFAULT 'none'
