@@ -18,6 +18,14 @@ import { PostList } from "../components/PostList";
 import { Loading } from "../components/PageState";
 import { useDocumentTitle } from "../hooks/useDocumentTitle";
 
+// Compact on phones, full size from the sm breakpoint up. Overrides the
+// theme's sizeLarge padding, which is generous for a 375px screen.
+const heroButtonSx = {
+  paddingInline: { xs: 2, sm: 3 },
+  paddingBlock: { xs: 0.75, sm: 1.375 },
+  fontSize: { xs: "0.875rem", sm: "0.98rem" },
+};
+
 export default function Home() {
   const { settings, t } = useApp();
   useDocumentTitle(settings?.full_name);
@@ -147,11 +155,26 @@ export default function Home() {
                 {settings.tagline}
               </Typography>
             )}
-            <Stack direction="row" spacing={2} flexWrap="wrap" useFlexGap>
-              <Button component={RouterLink} to="/projects" variant="contained" size="large">
+            {/* Compact on phones, full size from tablet up. Done in CSS rather
+                than a useMediaQuery so the buttons never render at the wrong
+                size on first paint. */}
+            <Stack direction="row" spacing={{ xs: 1.25, sm: 2 }} flexWrap="wrap" useFlexGap>
+              <Button
+                component={RouterLink}
+                to="/projects"
+                variant="contained"
+                size="large"
+                sx={heroButtonSx}
+              >
                 {t("home.viewWork")}
               </Button>
-              <Button component={RouterLink} to="/contact" variant="outlined" size="large">
+              <Button
+                component={RouterLink}
+                to="/contact"
+                variant="outlined"
+                size="large"
+                sx={heroButtonSx}
+              >
                 {t("home.getInTouch")}
               </Button>
             </Stack>
