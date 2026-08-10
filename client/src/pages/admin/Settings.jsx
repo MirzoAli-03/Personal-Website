@@ -182,8 +182,9 @@ export default function Settings() {
           <MenuItem value="none">{t("settings.bgNone")}</MenuItem>
           <MenuItem value="mesh">{t("settings.bgMesh")}</MenuItem>
           <MenuItem value="particles">{t("settings.bgParticles")}</MenuItem>
+          <MenuItem value="contours">{t("settings.bgContours")}</MenuItem>
         </TextField>
-        {form.background_style === "particles" && (
+        {(form.background_style === "particles" || form.background_style === "contours") && (
           <Typography variant="caption" color="text.secondary" display="block" sx={{ mt: 1.5 }}>
             {t("settings.bgParticlesNote")}
           </Typography>

@@ -204,6 +204,7 @@ export default {
   "settings.bgNone": "None — plain background",
   "settings.bgMesh": "Gradient mesh — soft blurred colour",
   "settings.bgParticles": "Particle network — animated dots and lines",
+  "settings.bgContours": "Contour lines — drifting topographic ridges",
   "settings.bgParticlesNote":
     "Animation is disabled automatically for visitors who have reduced motion turned on, and pauses when the tab is in the background.",
 

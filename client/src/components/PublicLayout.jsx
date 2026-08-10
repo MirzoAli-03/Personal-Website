@@ -28,6 +28,7 @@ import LanguageSwitcher from "./LanguageSwitcher";
 import ProfileModal from "./ProfileModal";
 import MeshBackground from "./MeshBackground";
 import ParticleNetwork from "./ParticleNetwork";
+import ContourField from "./ContourField";
 import { useScrolled } from "../hooks/useScrolled";
 
 const NAV = [
@@ -62,6 +63,7 @@ export default function PublicLayout() {
     <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
       {background === "mesh" && <MeshBackground />}
       {background === "particles" && <ParticleNetwork />}
+      {background === "contours" && <ContourField />}
 
       {/* Own stacking context so content always sits above the background. */}
       <Box
