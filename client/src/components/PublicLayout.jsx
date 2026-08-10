@@ -25,7 +25,6 @@ import { useState } from "react";
 
 import { useApp } from "../context/AppContext";
 import LanguageSwitcher from "./LanguageSwitcher";
-import MeshBackground from "./MeshBackground";
 import ProfileModal from "./ProfileModal";
 import { useScrolled } from "../hooks/useScrolled";
 
@@ -58,12 +57,8 @@ export default function PublicLayout() {
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
-      <MeshBackground />
-      {/* Own stacking context so every child sits above the mesh. */}
       <Box
         sx={{
-          position: "relative",
-          zIndex: 1,
           display: "flex",
           flexDirection: "column",
           minHeight: "100vh",

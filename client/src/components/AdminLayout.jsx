@@ -22,7 +22,6 @@ import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 
 import { useApp } from "../context/AppContext";
 import LanguageSwitcher from "./LanguageSwitcher";
-import MeshBackground from "./MeshBackground";
 import ProfileModal from "./ProfileModal";
 import { useScrolled } from "../hooks/useScrolled";
 
@@ -58,10 +57,8 @@ export default function AdminLayout() {
   }
 
   return (
-    <Box sx={{ minHeight: "100vh" }}>
-      <MeshBackground subtle />
-      {/* Own stacking context so the panel sits above the mesh. */}
-      <Box sx={{ position: "relative", zIndex: 1, minHeight: "100vh" }}>
+    <Box sx={{ minHeight: "100vh", bgcolor: "background.default" }}>
+      <Box sx={{ minHeight: "100vh" }}>
       <AppBar
         position="sticky"
         elevation={0}

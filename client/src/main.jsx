@@ -1,5 +1,9 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
+
+// Self-hosted variable fonts — no CDN request, no flash of fallback text.
+import "@fontsource-variable/fraunces";
+import "@fontsource-variable/public-sans";
 import { BrowserRouter } from "react-router-dom";
 import { ThemeProvider, CssBaseline } from "@mui/material";
 

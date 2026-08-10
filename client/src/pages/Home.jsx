@@ -13,7 +13,8 @@ import {
 import { useApp } from "../context/AppContext";
 import { useAsync } from "../hooks/useAsync";
 import { api } from "../api";
-import { PostCard, ProjectCard } from "../components/Cards";
+import { ProjectCard } from "../components/Cards";
+import { PostList } from "../components/PostList";
 import { Loading } from "../components/PageState";
 import { useDocumentTitle } from "../hooks/useDocumentTitle";
 
@@ -85,63 +86,85 @@ export default function Home() {
         </Stack>
       </Container>
 
+      {/* Section label in the margin, content in the main column — the layout
+          reads as an article rather than a stack of app panels. */}
       {(settings?.bio || settings?.skills?.length > 0) && (
-        <Container maxWidth="lg" sx={{ py: 6 }}>
-          <Typography variant="h2" sx={{ fontSize: "1.7rem", mb: 3 }}>
-            {t("home.about")}
-          </Typography>
-          {settings.bio && (
-            <Typography color="text.secondary" sx={{ maxWidth: "60ch", mb: 3 }}>
-              {settings.bio}
-            </Typography>
-          )}
-          <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
-            {settings.skills?.map((skill) => (
-              <Chip key={skill} label={skill} variant="outlined" />
-            ))}
-          </Stack>
+        <Container maxWidth="lg" sx={{ py: { xs: 5, md: 7 } }}>
+          <Box sx={{ borderTop: 1, borderColor: "divider", pt: { xs: 4, md: 5 } }}>
+            <Box
+              sx={{
+                display: "grid",
+                gridTemplateColumns: { xs: "1fr", md: "132px 1fr" },
+                gap: { xs: 2, md: 4 },
+              }}
+            >
+              <Typography variant="overline" color="text.secondary" sx={{ pt: 0.5 }}>
+                {t("home.about")}
+              </Typography>
+              <Box>
+                {settings.bio && (
+                  <Typography sx={{ maxWidth: "62ch", fontSize: "1.05rem", mb: 3 }}>
+                    {settings.bio}
+                  </Typography>
+                )}
+                <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
+                  {settings.skills?.map((skill) => (
+                    <Chip key={skill} label={skill} variant="outlined" size="small" />
+                  ))}
+                </Stack>
+              </Box>
+            </Box>
+          </Box>
         </Container>
       )}
 
       {loading && <Loading />}
 
       {data?.projects?.length > 0 && (
-        <Container maxWidth="lg" sx={{ py: 6 }}>
-          <Stack direction="row" justifyContent="space-between" alignItems="baseline" sx={{ mb: 3 }}>
-            <Typography variant="h2" sx={{ fontSize: "1.7rem" }}>
-              {t("home.featured")}
-            </Typography>
-            <Button component={RouterLink} to="/projects" size="small">
-              {t("common.seeAll")} →
-            </Button>
-          </Stack>
-          <Grid container spacing={3}>
-            {data.projects.map((project) => (
-              <Grid item xs={12} sm={6} md={4} key={project.id}>
-                <ProjectCard project={project} />
-              </Grid>
-            ))}
-          </Grid>
+        <Container maxWidth="lg" sx={{ py: { xs: 5, md: 7 } }}>
+          <Box sx={{ borderTop: 1, borderColor: "divider", pt: { xs: 4, md: 5 } }}>
+            <Stack
+              direction="row"
+              justifyContent="space-between"
+              alignItems="baseline"
+              sx={{ mb: 4 }}
+            >
+              <Typography variant="overline" color="text.secondary">
+                {t("home.featured")}
+              </Typography>
+              <Button component={RouterLink} to="/projects" size="small">
+                {t("common.seeAll")} →
+              </Button>
+            </Stack>
+            <Grid container spacing={3}>
+              {data.projects.map((project) => (
+                <Grid item xs={12} sm={6} md={4} key={project.id}>
+                  <ProjectCard project={project} />
+                </Grid>
+              ))}
+            </Grid>
+          </Box>
         </Container>
       )}
 
       {data?.posts?.length > 0 && (
-        <Container maxWidth="lg" sx={{ py: 6 }}>
-          <Stack direction="row" justifyContent="space-between" alignItems="baseline" sx={{ mb: 3 }}>
-            <Typography variant="h2" sx={{ fontSize: "1.7rem" }}>
-              {t("home.latest")}
-            </Typography>
-            <Button component={RouterLink} to="/blog" size="small">
-              {t("common.seeAll")} →
-            </Button>
-          </Stack>
-          <Grid container spacing={3}>
-            {data.posts.map((post) => (
-              <Grid item xs={12} sm={6} key={post.id}>
-                <PostCard post={post} />
-              </Grid>
-            ))}
-          </Grid>
+        <Container maxWidth="lg" sx={{ py: { xs: 5, md: 7 } }}>
+          <Box sx={{ borderTop: 1, borderColor: "divider", pt: { xs: 4, md: 5 } }}>
+            <Stack
+              direction="row"
+              justifyContent="space-between"
+              alignItems="baseline"
+              sx={{ mb: 2 }}
+            >
+              <Typography variant="overline" color="text.secondary">
+                {t("home.latest")}
+              </Typography>
+              <Button component={RouterLink} to="/blog" size="small">
+                {t("common.seeAll")} →
+              </Button>
+            </Stack>
+            <PostList posts={data.posts} />
+          </Box>
         </Container>
       )}
 
