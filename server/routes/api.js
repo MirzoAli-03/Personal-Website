@@ -253,6 +253,7 @@ router.put(
       hero_heading: String(b.hero_heading || "").trim(),
       bio: String(b.bio || "").trim(),
       avatar_image_id: toIntOrNull(b.avatar_image_id),
+      hero_image_id: toIntOrNull(b.hero_image_id),
       skills: parseTags(b.skills),
       email: String(b.email || "").trim(),
       github_url: String(b.github_url || "").trim(),

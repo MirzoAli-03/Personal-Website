@@ -93,6 +93,10 @@ async function main() {
   `;
   await sql`ALTER TABLE site_settings ADD COLUMN IF NOT EXISTS role TEXT NOT NULL DEFAULT ''`;
   await sql`ALTER TABLE site_settings ADD COLUMN IF NOT EXISTS location TEXT NOT NULL DEFAULT ''`;
+  await sql`
+    ALTER TABLE site_settings
+    ADD COLUMN IF NOT EXISTS hero_image_id INTEGER REFERENCES images(id) ON DELETE SET NULL
+  `;
 
   await sql`CREATE INDEX IF NOT EXISTS posts_published_idx ON posts (published, published_at DESC)`;
   await sql`CREATE INDEX IF NOT EXISTS projects_sort_idx ON projects (sort_order, id)`;

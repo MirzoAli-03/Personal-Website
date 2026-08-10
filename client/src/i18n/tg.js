@@ -201,6 +201,10 @@ export default {
   "settings.addPhoto": "Акс илова кардан",
   "settings.changePhoto": "Иваз кардан",
   "settings.removePhoto": "Нест кардан",
+  "settings.heroImage": "Заминаи саҳифаи асосӣ",
+  "settings.heroImageHelp":
+    "Аксе, ки дар паси матни саҳифаи асосӣ ҷойгир мешавад. Қабати торикунанда худкор илова мешавад, то сарлавҳа хоно бимонад — аксеро интихоб кунед, ки дар қисми поёнаш ҷузъиёти зиёд надошта бошад.",
+  "settings.heroImageNone": "Акси замина интихоб нашудааст",
   "settings.heading": "Сарлавҳаи саҳифаи асосӣ",
   "settings.tagline": "Тавсифи кӯтоҳ",
   "settings.taglineHelp": "Сархат дар зери сарлавҳа",

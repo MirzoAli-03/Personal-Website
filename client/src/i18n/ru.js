@@ -199,6 +199,10 @@ export default {
   "settings.addPhoto": "Добавить фото",
   "settings.changePhoto": "Заменить",
   "settings.removePhoto": "Удалить",
+  "settings.heroImage": "Фон главной страницы",
+  "settings.heroImageHelp":
+    "Фотография за текстом на главной. Затемняющий слой добавляется автоматически, чтобы заголовок оставался читаемым — выбирайте снимок без мелких деталей в нижней части.",
+  "settings.heroImageNone": "Фоновая фотография не выбрана",
   "settings.heading": "Заголовок главной страницы",
   "settings.tagline": "Краткое описание",
   "settings.taglineHelp": "Абзац под заголовком",
