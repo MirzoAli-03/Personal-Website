@@ -122,29 +122,32 @@ export default function Home() {
             {settings?.hero_heading || settings?.full_name}
           </Typography>
 
-          <Stack
-            direction={{ xs: "column", md: "row" }}
-            spacing={{ xs: 3, md: 6 }}
-            alignItems={{ xs: "flex-start", md: "flex-end" }}
-          >
+          {/* Buttons sit under the tagline rather than beside it, so the hero
+              reads top to bottom in one column: label, headline, sentence,
+              action. */}
+          <Stack spacing={{ xs: 3, md: 4 }} alignItems="flex-start">
             {settings?.tagline && (
               <Typography
                 sx={{
-                  maxWidth: "44ch",
-                  fontSize: "1.1rem",
+                  maxWidth: "46ch",
+                  // Scales with the viewport like the headline, so the two
+                  // stay in proportion instead of the sentence shrinking away
+                  // on wide screens.
+                  fontSize: "clamp(1.25rem, 1.9vw, 1.7rem)",
+                  lineHeight: 1.45,
                   // Medium weight: regular read thin beside a heavy display
                   // serif, which made the tagline look like a caption rather
                   // than the second thing you should read.
                   fontWeight: 500,
-                  flex: 1,
-                  // Over a photo the secondary grey loses too much contrast.
-                  color: heroPhoto ? "text.primary" : "text.secondary",
+                  // Raspberry, tuned per theme — the light-mode tone would be
+                  // too dark to read on the dark ground.
+                  color: (th) => (th.palette.mode === "dark" ? "#EE85AC" : "#B0245B"),
                 }}
               >
                 {settings.tagline}
               </Typography>
             )}
-            <Stack direction="row" spacing={2} flexWrap="wrap" useFlexGap sx={{ flex: "none" }}>
+            <Stack direction="row" spacing={2} flexWrap="wrap" useFlexGap>
               <Button component={RouterLink} to="/projects" variant="contained" size="large">
                 {t("home.viewWork")}
               </Button>
