@@ -162,9 +162,9 @@ export default function PublicLayout() {
         </Container>
       </AppBar>
 
-      {/* Translucent so the animated background carries through the menu
-          instead of stopping at a solid panel. The blur is what keeps the
-          labels readable over whatever is moving underneath. */}
+      {/* The background runs inside the drawer rather than showing through it.
+          A fixed layer would sit behind the drawer's own scrim and never be
+          visible, so this one fills the panel instead. */}
       <Drawer
         anchor="right"
         open={drawerOpen}
@@ -172,9 +172,12 @@ export default function PublicLayout() {
         slotProps={{
           paper: {
             sx: {
-              bgcolor: (th) =>
-                th.palette.mode === "dark" ? "rgba(15,16,19,.78)" : "rgba(252,252,253,.82)",
-              backdropFilter: "saturate(180%) blur(16px)",
+              // Explicit width: the drawer sized itself from its content, and
+              // an absolutely positioned background layer gives it none.
+              width: 264,
+              position: "relative",
+              overflow: "hidden",
+              bgcolor: "background.default",
               backgroundImage: "none",
               borderLeft: 1,
               borderColor: "divider",
@@ -182,7 +185,8 @@ export default function PublicLayout() {
           },
         }}
       >
-        <List sx={{ width: 240, pt: 3 }}>
+        <SiteBackground contained />
+        <List sx={{ pt: 3, position: "relative", zIndex: 1 }}>
           {NAV.map((item) => (
             <ListItemButton
               key={item.to}

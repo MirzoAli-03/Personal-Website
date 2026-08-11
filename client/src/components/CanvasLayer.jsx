@@ -1,10 +1,25 @@
 import { Box } from "@mui/material";
 
-// Fixed, non-interactive layer behind the page content. Every canvas
-// background renders through this so their positioning cannot drift apart.
-export default function CanvasLayer({ canvasRef }) {
+/*
+  Non-interactive layer that every canvas background renders through, so their
+  positioning cannot drift apart.
+
+  `contained` switches from fixed (behind the whole page) to absolute (filling
+  whatever positioned ancestor it sits in) — used inside the mobile drawer,
+  where a fixed layer would be hidden behind the drawer's own scrim.
+*/
+export default function CanvasLayer({ canvasRef, contained = false }) {
   return (
-    <Box aria-hidden="true" sx={{ position: "fixed", inset: 0, zIndex: 0, pointerEvents: "none" }}>
+    <Box
+      aria-hidden="true"
+      sx={{
+        position: contained ? "absolute" : "fixed",
+        inset: 0,
+        zIndex: 0,
+        pointerEvents: "none",
+        overflow: "hidden",
+      }}
+    >
       <Box
         component="canvas"
         ref={canvasRef}

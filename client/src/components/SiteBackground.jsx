@@ -16,9 +16,14 @@ const BACKGROUNDS = {
 };
 
 // Single place that maps the saved setting to a background component, so the
-// public site and the admin panel cannot drift apart as options are added.
-export default function SiteBackground() {
+// public site, the admin panel and the mobile drawer cannot drift apart as
+// options are added.
+//
+// `contained` fills the nearest positioned ancestor instead of the viewport —
+// needed inside the drawer, where a fixed layer would sit behind the drawer's
+// own scrim and never be seen.
+export default function SiteBackground({ contained = false }) {
   const { settings } = useApp();
   const Background = BACKGROUNDS[settings?.background_style];
-  return Background ? <Background /> : null;
+  return Background ? <Background contained={contained} /> : null;
 }

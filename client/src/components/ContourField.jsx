@@ -25,7 +25,7 @@ function field(x, t) {
   );
 }
 
-export default function ContourField() {
+export default function ContourField({ contained = false }) {
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
   const accent = theme.palette.primary.main;
@@ -64,5 +64,5 @@ export default function ContourField() {
     },
   });
 
-  return <CanvasLayer canvasRef={canvasRef} />;
+  return <CanvasLayer canvasRef={canvasRef} contained={contained} />;
 }

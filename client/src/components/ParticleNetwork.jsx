@@ -17,7 +17,7 @@ const AREA_PER_PARTICLE = 20000;
 const LINK_DISTANCE = 130;
 const SPEED = 0.16;
 
-export default function ParticleNetwork() {
+export default function ParticleNetwork({ contained = false }) {
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
   const accent = theme.palette.primary.main;
@@ -79,5 +79,5 @@ export default function ParticleNetwork() {
     },
   });
 
-  return <CanvasLayer canvasRef={canvasRef} />;
+  return <CanvasLayer canvasRef={canvasRef} contained={contained} />;
 }

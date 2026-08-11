@@ -12,12 +12,12 @@ import { Box } from "@mui/material";
 // why the layout's content is given its own stacking context.
 // `subtle` halves the strength for the admin panel, where dense tables and
 // form labels need the ground to stay quiet.
-export default function MeshBackground({ subtle = false }) {
+export default function MeshBackground({ subtle = false, contained = false }) {
   return (
     <Box
       aria-hidden="true"
       sx={{
-        position: "fixed",
+        position: contained ? "absolute" : "fixed",
         inset: 0,
         zIndex: 0,
         pointerEvents: "none",

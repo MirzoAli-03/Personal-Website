@@ -18,7 +18,7 @@ import { useCanvasBackground } from "../hooks/useCanvasBackground";
 const SPACING = 30;
 const MAX_RADIUS = 3.1;
 
-export default function HalftoneWave() {
+export default function HalftoneWave({ contained = false }) {
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
   const accent = theme.palette.primary.main;
@@ -53,5 +53,5 @@ export default function HalftoneWave() {
     },
   });
 
-  return <CanvasLayer canvasRef={canvasRef} />;
+  return <CanvasLayer canvasRef={canvasRef} contained={contained} />;
 }

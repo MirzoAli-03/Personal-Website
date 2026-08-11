@@ -20,7 +20,7 @@ const RIBBONS = 34;
 const SEGMENTS = 26;
 const SEGMENT_LENGTH = 26;
 
-export default function FlowRibbons() {
+export default function FlowRibbons({ contained = false }) {
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
   const accent = theme.palette.primary.main;
@@ -74,5 +74,5 @@ export default function FlowRibbons() {
     },
   });
 
-  return <CanvasLayer canvasRef={canvasRef} />;
+  return <CanvasLayer canvasRef={canvasRef} contained={contained} />;
 }

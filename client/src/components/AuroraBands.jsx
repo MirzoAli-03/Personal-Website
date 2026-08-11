@@ -21,7 +21,7 @@ const BANDS = [
   { hueShift: 2, speed: 0.068, width: 0.28, phase: 4.3 },
 ];
 
-export default function AuroraBands() {
+export default function AuroraBands({ contained = false }) {
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
   const accent = theme.palette.primary.main;
@@ -58,5 +58,5 @@ export default function AuroraBands() {
     },
   });
 
-  return <CanvasLayer canvasRef={canvasRef} />;
+  return <CanvasLayer canvasRef={canvasRef} contained={contained} />;
 }
