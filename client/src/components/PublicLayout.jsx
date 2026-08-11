@@ -26,21 +26,7 @@ import { useState } from "react";
 import { useApp } from "../context/AppContext";
 import LanguageSwitcher from "./LanguageSwitcher";
 import ProfileModal from "./ProfileModal";
-import MeshBackground from "./MeshBackground";
-import ParticleNetwork from "./ParticleNetwork";
-import ContourField from "./ContourField";
-import HalftoneWave from "./HalftoneWave";
-import FlowRibbons from "./FlowRibbons";
-import AuroraBands from "./AuroraBands";
-
-const BACKGROUNDS = {
-  mesh: MeshBackground,
-  particles: ParticleNetwork,
-  contours: ContourField,
-  halftone: HalftoneWave,
-  ribbons: FlowRibbons,
-  aurora: AuroraBands,
-};
+import SiteBackground from "./SiteBackground";
 import { useScrolled } from "../hooks/useScrolled";
 
 const NAV = [
@@ -63,7 +49,6 @@ export default function PublicLayout() {
   const scrolled = useScrolled();
 
   const isActive = (to) => (to === "/" ? pathname === "/" : pathname.startsWith(to));
-  const Background = BACKGROUNDS[settings?.background_style] || null;
 
   const socials = [
     ["GitHub", settings?.github_url],
@@ -73,7 +58,7 @@ export default function PublicLayout() {
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
-      {Background && <Background />}
+      <SiteBackground />
 
       {/* Own stacking context so content always sits above the background. */}
       <Box
@@ -177,8 +162,27 @@ export default function PublicLayout() {
         </Container>
       </AppBar>
 
-      <Drawer anchor="right" open={drawerOpen} onClose={() => setDrawerOpen(false)}>
-        <List sx={{ width: 220 }}>
+      {/* Translucent so the animated background carries through the menu
+          instead of stopping at a solid panel. The blur is what keeps the
+          labels readable over whatever is moving underneath. */}
+      <Drawer
+        anchor="right"
+        open={drawerOpen}
+        onClose={() => setDrawerOpen(false)}
+        slotProps={{
+          paper: {
+            sx: {
+              bgcolor: (th) =>
+                th.palette.mode === "dark" ? "rgba(15,16,19,.78)" : "rgba(252,252,253,.82)",
+              backdropFilter: "saturate(180%) blur(16px)",
+              backgroundImage: "none",
+              borderLeft: 1,
+              borderColor: "divider",
+            },
+          },
+        }}
+      >
+        <List sx={{ width: 240, pt: 3 }}>
           {NAV.map((item) => (
             <ListItemButton
               key={item.to}
@@ -186,8 +190,24 @@ export default function PublicLayout() {
               to={item.to}
               selected={isActive(item.to)}
               onClick={() => setDrawerOpen(false)}
+              sx={{ py: 1.25 }}
             >
-              <ListItemText primary={t(item.key)} />
+              <ListItemText
+                primary={t(item.key)}
+                slotProps={{
+                  primary: {
+                    sx: {
+                      // Display serif, matching the headings rather than the
+                      // body text — the menu is a set of titles, not prose.
+                      fontFamily: (th) => th.typography.h3.fontFamily,
+                      fontSize: "1.3rem",
+                      fontWeight: 600,
+                      letterSpacing: "-.02em",
+                      color: isActive(item.to) ? "primary.main" : "text.primary",
+                    },
+                  },
+                }}
+              />
             </ListItemButton>
           ))}
         </List>
