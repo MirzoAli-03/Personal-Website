@@ -53,12 +53,14 @@ export default function Home() {
           <Typography
             variant="h1"
             sx={{
-              // Scales with the viewport so it keeps filling the width rather
-              // than stopping short on wide screens.
-              fontSize: "clamp(2.5rem, 7.2vw, 5.6rem)",
-              lineHeight: 0.98,
-              letterSpacing: "-.04em",
-              maxWidth: "22ch",
+              // Scales with the viewport, but at a restrained size — the
+              // previous setting reached 90px, which shouted.
+              fontSize: "clamp(1.9rem, 3.9vw, 3.5rem)",
+              lineHeight: 1.05,
+              // Tight tracking suits a huge headline; at this size it needs
+              // to relax or the letters start to collide.
+              letterSpacing: "-.025em",
+              maxWidth: "24ch",
               mt: 1.5,
               mb: 3,
               textWrap: "balance",
@@ -74,12 +76,12 @@ export default function Home() {
             {settings?.tagline && (
               <Typography
                 sx={{
-                  maxWidth: "46ch",
+                  maxWidth: "52ch",
                   // Scales with the viewport like the headline, so the two
                   // stay in proportion instead of the sentence shrinking away
                   // on wide screens.
-                  fontSize: "clamp(1.25rem, 1.9vw, 1.7rem)",
-                  lineHeight: 1.45,
+                  fontSize: "clamp(0.95rem, 1.15vw, 1.15rem)",
+                  lineHeight: 1.55,
                   // Medium weight: regular read thin beside a heavy display
                   // serif, which made the tagline look like a caption rather
                   // than the second thing you should read.
